@@ -1,0 +1,55 @@
+{
+  "vendas": [
+    {
+      "id": "venda-001",
+      "cliente_id": "cliente-001",
+      "data": "2024-01-15",
+      "produtos": ["fox-barba", "espuma-barba"]
+    },
+    {
+      "id": "venda-002",
+      "cliente_id": "cliente-002",
+      "data": "2024-01-16",
+      "produtos": ["fox-barba", "tonico-barba"]
+    },
+    {
+      "id": "venda-003",
+      "cliente_id": "cliente-001",
+      "data": "2024-01-20",
+      "produtos": ["fox-barba", "espuma-barba", "tonico-barba"]
+    },
+    {
+      "id": "venda-004",
+      "cliente_id": "cliente-003",
+      "data": "2024-01-22",
+      "produtos": ["espuma-barba", "condicionador"]
+    },
+    {
+      "id": "venda-005",
+      "cliente_id": "cliente-002",
+      "data": "2024-01-25",
+      "produtos": ["fox-barba", "pente-metal"]
+    },
+    {
+      "id": "venda-006",
+      "cliente_id": "cliente-004",
+      "data": "2024-02-01",
+      "produtos": ["qod-shampoo", "qod-pomada"]
+    },
+    {
+      "id": "venda-007",
+      "cliente_id": "cliente-003",
+      "data": "2024-02-05",
+      "produtos": ["qod-shampoo", "qod-pomada", "pente-metal"]
+    }
+  ],
+  "produtos": [
+    { "id": "fox-barba", "nome": "Fox For Men Barba", "categoria": "Barba", "preco": 89.90 },
+    { "id": "espuma-barba", "nome": "Espuma para Barba Premium", "categoria": "Barba", "preco": 34.90 },
+    { "id": "tonico-barba", "nome": "Tônico de Barba", "categoria": "Barba", "preco": 49.90 },
+    { "id": "condicionador", "nome": "Condicionador de Barba", "categoria": "Barba", "preco": 39.90 },
+    { "id": "pente-metal", "nome": "Pente de Metal Profissional", "categoria": "Acessórios", "preco": 29.90 },
+    { "id": "qod-shampoo", "nome": "QOD Barber Shampoo", "categoria": "Cabelo", "preco": 59.90 },
+    { "id": "qod-pomada", "nome": "QOD Pomada Forte", "categoria": "Cabelo", "preco": 69.90 }
+  ]
+}
