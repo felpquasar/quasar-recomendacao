@@ -9,7 +9,8 @@
     "test": "jest",
     "test:unit": "jest tests/unit",
     "test:integration": "jest tests/integration",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "seed": "node src/database/seed.js"
   },
   "keywords": ["recomendacao", "association-rules", "barbershop"],
   "author": "Felipe Pereira",
