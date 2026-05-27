@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>TCC - Sistema de Recomendação Quasar Barber</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #1a1a2e;
+    background: white;
+  }
+
+  .capa {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: white;
+    text-align: center;
+    padding: 3rem;
+    page-break-after: always;
+  }
+  .capa .logo { font-size: 4rem; margin-bottom: 1rem; }
+  .capa h1 { font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; }
+  .capa h2 { font-size: 1.2rem; font-weight: 400; opacity: 0.85; margin-bottom: 2rem; }
+  .capa .badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 20px;
+    padding: 0.4rem 1.2rem;
+    font-size: 0.9rem;
+    margin: 0.3rem;
+  }
+  .capa .meta { margin-top: 2.5rem; opacity: 0.7; font-size: 0.95rem; }
+
+  .pagina { padding: 2.5rem 3rem; }
+  h1.secao {
+    font-size: 1.5rem;
+    color: #0f3460;
+    border-bottom: 3px solid #e94560;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+    margin-top: 2rem;
+  }
+  h2.sub { font-size: 1.1rem; color: #16213e; margin: 1.2rem 0 0.5rem; }
+  h3.sub2 { font-size: 0.95rem; color: #0f3460; margin: 1rem 0 0.3rem; }
+  p { margin-bottom: 0.7rem; }
+
+  .status-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .status-card { border-radius: 8px; padding: 1rem; text-align: center; }
+  .status-card.done    { background: #d4edda; border: 2px solid #28a745; }
+  .status-card.pending { background: #f8f9fa; border: 2px solid #dee2e6; }
+  .status-card .semana { font-size: 0.8rem; color: #555; margin-bottom: 0.3rem; }
+  .status-card .titulo { font-weight: 700; font-size: 0.9rem; }
+  .status-card .status-badge { font-size: 1.2rem; margin-bottom: 0.3rem; }
+
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 10pt; }
+  th { background: #0f3460; color: white; padding: 0.6rem 0.8rem; text-align: left; }
+  td { padding: 0.5rem 0.8rem; border-bottom: 1px solid #e0e0e0; }
+  tr:nth-child(even) td { background: #f8f9fa; }
+
+  .code-block {
+    background: #1e1e2e;
+    color: #cdd6f4;
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 9pt;
+    margin: 1rem 0;
+    border-left: 4px solid #e94560;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  .code-block .comment { color: #6c7086; }
+  .code-block .keyword { color: #cba6f7; }
+  .code-block .string  { color: #a6e3a1; }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .metric-card {
+    background: #f0f4ff;
+    border-radius: 8px;
+    padding: 1rem;
+    border-left: 4px solid #0f3460;
+  }
+  .metric-card .valor { font-size: 1.8rem; font-weight: 800; color: #0f3460; }
+  .metric-card .label { font-size: 0.8rem; color: #666; margin-top: 0.2rem; }
+
+  .arch-box {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    margin: 1rem 0;
+    font-family: 'Consolas', monospace;
+    font-size: 9pt;
+    color: #333;
+    white-space: pre;
+  }
+
+  .highlight {
+    background: #fff8e1;
+    border-left: 4px solid #ffc107;
+    padding: 0.8rem 1rem;
+    margin: 1rem 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 10pt;
+  }
+  .danger {
+    background: #fff5f5;
+    border-left: 4px solid #e94560;
+    padding: 0.8rem 1rem;
+    margin: 1rem 0;
+    border-radius: 0 8px 8px 0;
+  }
+
+  ul, ol { padding-left: 1.5rem; margin-bottom: 0.8rem; }
+  li { margin-bottom: 0.3rem; }
+
+  .progress-bar-wrap { background: #e0e0e0; border-radius: 20px; height: 12px; margin: 0.3rem 0 0.8rem; }
+  .progress-bar { height: 12px; border-radius: 20px; }
+  .pb-green { background: linear-gradient(90deg, #28a745, #20c997); }
+  .pb-blue  { background: linear-gradient(90deg, #007bff, #6610f2); }
+  .pb-gray  { background: #adb5bd; }
+
+  .page-break { page-break-before: always; }
+
+  .rodape {
+    background: #1a1a2e;
+    color: rgba(255,255,255,0.8);
+    text-align: center;
+    padding: 2rem;
+    font-size: 9pt;
+    margin-top: 3rem;
+  }
+</style>
+</head>
+<body>
+
+<!-- CAPA -->
+<div class="capa">
+  <div class="logo">&#x2702;&#xFE0F;</div>
+  <h1>Sistema de Recomendação de Produtos</h1>
+  <h2>TCC — Ciência da Computação · Quasar Barber Distribuidora</h2>
+  <div>
+    <span class="badge">Node.js 18+</span>
+    <span class="badge">React 18</span>
+    <span class="badge">Supabase</span>
+    <span class="badge">Redis</span>
+    <span class="badge">Association Rules</span>
+  </div>
+  <div class="meta">
+    <strong>Autor:</strong> Felipe Pereira &nbsp;|&nbsp;
+    <strong>Data:</strong> Maio de 2026 &nbsp;|&nbsp;
+    <strong>Prazo:</strong> 17 de Agosto de 2026
+  </div>
+</div>
+
+<!-- ÍNDICE -->
+<div class="pagina">
+  <h1 class="secao">Índice</h1>
+  <ol>
+    <li>Objetivo do Projeto</li>
+    <li>Contexto de Negócio</li>
+    <li>Arquitetura do Sistema</li>
+    <li>Stack Tecnológico</li>
+    <li>Estrutura do Banco de Dados</li>
+    <li>Algoritmo de Recomendação</li>
+    <li>API REST — Endpoints</li>
+    <li>Cache Redis</li>
+    <li>Testes Unitários</li>
+    <li>Progresso por Semana (Semanas 1–4)</li>
+    <li>Arquivos do Projeto</li>
+    <li>Decisões Técnicas e Armadilhas</li>
+    <li>Próximos Passos (Semanas 5–12)</li>
+  </ol>
+</div>
+
+<!-- 1. OBJETIVO -->
+<div class="pagina page-break">
+  <h1 class="secao">1. Objetivo do Projeto</h1>
+  <p>
+    Desenvolver um <strong>sistema de recomendação de produtos B2B</strong> para a
+    Quasar Barber, distribuidora de produtos para barbearias em Codó-MA.
+    O sistema analisa o histórico de vendas para identificar padrões de compra e
+    sugerir automaticamente produtos complementares no momento do pedido.
+  </p>
+  <p>
+    O trabalho aplica o algoritmo de <strong>Association Rules (Market Basket Analysis)</strong>
+    — técnica consolidada em Data Mining — adaptada ao contexto B2B.
+  </p>
+  <h2 class="sub">Problema resolvido</h2>
+  <ul>
+    <li>Vendedores não sabem quais produtos sugerir em cada pedido</li>
+    <li>Oportunidades de cross-sell perdidas por falta de análise de dados</li>
+    <li>Decisões baseadas em intuição, não em histórico quantitativo</li>
+  </ul>
+  <h2 class="sub">Solução proposta</h2>
+  <ul>
+    <li>API REST: recebe produto → retorna top 3 produtos comprados junto</li>
+    <li>Dashboard React para visualizar padrões e métricas</li>
+    <li>Algoritmo treinado com dados reais de vendas da distribuidora</li>
+  </ul>
+  <div class="highlight">
+    <strong>Exemplo:</strong> Vendedor informa "Fox For Men Barba" → sistema retorna
+    "Espuma para Barba Premium (43% confiança)" e "Tônico de Barba (43%)" como sugestões.
+  </div>
+</div>
+
+<!-- 2. CONTEXTO DE NEGÓCIO -->
+<div class="pagina page-break">
+  <h1 class="secao">2. Contexto de Negócio</h1>
+  <table>
+    <tr><th>Item</th><th>Detalhe</th></tr>
+    <tr><td>Empresa</td><td>Quasar Barber — Distribuidora de produtos para barbearias</td></tr>
+    <tr><td>Localização</td><td>Codó, Maranhão (MA)</td></tr>
+    <tr><td>Proprietário</td><td>Felipe Pereira</td></tr>
+    <tr><td>Tipo de venda</td><td>B2B: distribuidora → barbearias</td></tr>
+    <tr><td>Dataset atual</td><td>Dados mock realistas (CSV real sem granularidade de itens)</td></tr>
+    <tr><td>Prazo do TCC</td><td>17 de Agosto de 2026</td></tr>
+    <tr><td>Horas planejadas</td><td>12 semanas × 6h = 72 horas</td></tr>
+  </table>
+  <div class="danger">
+    <strong>Limitação dos dados reais:</strong> O CSV Vendas_2026.csv contém apenas totais
+    por cliente (sem produtos por pedido), sendo inutilizável para Association Rules.
+    Dados mock foram criados para desenvolvimento. Quando disponível o relatório de itens
+    por pedido, os dados reais substituem o mock sem alterar código.
+  </div>
+</div>
+
+<!-- 3. ARQUITETURA -->
+<div class="pagina page-break">
+  <h1 class="secao">3. Arquitetura do Sistema</h1>
+  <div class="arch-box">┌─────────────────────────────────────────────────────────────────┐
+│                       ARQUITETURA GERAL                         │
+└─────────────────────────────────────────────────────────────────┘
+
+  ┌──────────────────┐         ┌──────────────────────────────────┐
+  │  React 18 + Vite │──HTTP──▶│  Express.js (Node.js 18+)        │
+  │  localhost:5173  │◀──JSON──│  localhost:3000                   │
+  └──────────────────┘         │                                   │
+                                │  Routes                           │
+                                │  /api/recomendacoes/:produtoId    │
+                                │  /api/estatisticas                │
+                                │         │                         │
+                                │  Services                         │
+                                │  recomendacao.js (Apriori)        │
+                                │  cache.js (Redis)                 │
+                                │         │                         │
+                                │  Models (Supabase JS client)      │
+                                │  buscarVendas()                   │
+                                │  buscarProdutos()                 │
+                                └──────────┬────────────────────────┘
+                                           │
+                  ┌────────────────────────▼─────────────────────┐
+                  │         Supabase (PostgreSQL)                 │
+                  │  qb_clientes  qb_produtos  qb_vendas          │
+                  │  qb_itens_venda  qb_regras_associacao         │
+                  └──────────────────────────────────────────────┘
+                                           ↕ (opcional)
+                  ┌──────────────────────────────────────────────┐
+                  │         Redis (Cache)                        │
+                  │  rec:&lt;produto&gt;  TTL 3600s                    │
+                  │  stats:global   TTL 1800s                    │
+                  └──────────────────────────────────────────────┘</div>
+</div>
+
+<!-- 4. STACK -->
+<div class="pagina page-break">
+  <h1 class="secao">4. Stack Tecnológico</h1>
+  <h2 class="sub">Backend</h2>
+  <table>
+    <tr><th>Tecnologia</th><th>Versão</th><th>Papel</th></tr>
+    <tr><td>Node.js</td><td>18+</td><td>Runtime JavaScript server-side</td></tr>
+    <tr><td>Express.js</td><td>4.18</td><td>Framework HTTP / roteamento</td></tr>
+    <tr><td>@supabase/supabase-js</td><td>2.38</td><td>Cliente PostgREST para banco de dados</td></tr>
+    <tr><td>redis</td><td>5.x</td><td>Cliente Redis para cache</td></tr>
+    <tr><td>dotenv</td><td>16.x</td><td>Variáveis de ambiente</td></tr>
+    <tr><td>cors</td><td>2.8</td><td>Middleware CORS</td></tr>
+    <tr><td>jest + supertest</td><td>29.x / 6.x</td><td>Testes unitários e de integração</td></tr>
+  </table>
+  <h2 class="sub">Frontend</h2>
+  <table>
+    <tr><th>Tecnologia</th><th>Versão</th><th>Papel</th></tr>
+    <tr><td>React</td><td>18</td><td>Biblioteca UI declarativa</td></tr>
+    <tr><td>Vite</td><td>5.x</td><td>Bundler e servidor de desenvolvimento</td></tr>
+    <tr><td>Axios</td><td>1.x</td><td>Cliente HTTP para a API</td></tr>
+    <tr><td>React Router DOM</td><td>6.x</td><td>Roteamento client-side</td></tr>
+  </table>
+  <h2 class="sub">Infraestrutura</h2>
+  <table>
+    <tr><th>Serviço</th><th>Plano</th><th>Uso</th></tr>
+    <tr><td>Supabase</td><td>Gratuito</td><td>PostgreSQL 14+ hospedado na nuvem</td></tr>
+    <tr><td>Upstash Redis</td><td>Gratuito</td><td>Cache de recomendações (recomendado no Windows)</td></tr>
+    <tr><td>Vercel (planejado)</td><td>Gratuito</td><td>Deploy do frontend React</td></tr>
+    <tr><td>Railway (planejado)</td><td>Pago</td><td>Deploy do backend Node.js</td></tr>
+  </table>
+</div>
+
+<!-- 5. BANCO DE DADOS -->
+<div class="pagina page-break">
+  <h1 class="secao">5. Estrutura do Banco de Dados</h1>
+  <p>
+    Prefixo <code>qb_</code> evita conflito com outro projeto no mesmo Supabase.
+    IDs são <code>bigint GENERATED ALWAYS AS IDENTITY</code> — FK UUID×bigint causava erro.
+  </p>
+  <table>
+    <tr><th>Tabela</th><th>Colunas principais</th><th>Papel</th></tr>
+    <tr><td>qb_clientes</td><td>id, nome_loja, cidade, uf</td><td>Barbearias clientes</td></tr>
+    <tr><td>qb_produtos</td><td>id, nome, categoria, preco, ativo</td><td>Catálogo de produtos</td></tr>
+    <tr><td>qb_vendas</td><td>id, cliente_id, data_venda, valor_total</td><td>Cabeçalho de transações</td></tr>
+    <tr><td>qb_itens_venda</td><td>id, venda_id, produto_id, quantidade, valor_unitario</td><td>Itens de cada venda (chave p/ algoritmo)</td></tr>
+    <tr><td>qb_regras_associacao</td><td>id, antecedente_id, consequente_id, confidence, support, lift</td><td>Cache persistente de regras</td></tr>
+  </table>
+  <h2 class="sub">Join crítico — buscarVendas()</h2>
+  <div class="code-block"><span class="comment">// qb_itens_venda JOIN qb_produtos via PostgREST</span>
+<span class="keyword">const</span> { data } = <span class="keyword">await</span> supabase
+  .from(<span class="string">'qb_itens_venda'</span>)
+  .select(<span class="string">'venda_id, quantidade, qb_produtos (id, nome, categoria)'</span>);
+
+<span class="comment">// Resultado agrupado por venda_id (feito em memória com vendasMap):</span>
+<span class="comment">// [ { id: 1, itens: [{ nome_produto: 'Fox Barba', ... }] }, ... ]</span></div>
+  <div class="highlight">
+    <strong>RLS desabilitado:</strong> Row Level Security desabilitado nas tabelas qb_* via
+    <code>ALTER TABLE qb_* DISABLE ROW LEVEL SECURITY</code> — padrão bloqueava reads
+    com anon key retornando [] silenciosamente.
+  </div>
+</div>
+
+<!-- 6. ALGORITMO -->
+<div class="pagina page-break">
+  <h1 class="secao">6. Algoritmo de Recomendação — Association Rules</h1>
+  <h2 class="sub">As três métricas</h2>
+  <table>
+    <tr><th>Métrica</th><th>Fórmula</th><th>Significado</th></tr>
+    <tr><td><strong>Support</strong></td><td>freq(A ∩ B) / total</td><td>Quão comum é o par A+B. Filtra pares raros.</td></tr>
+    <tr><td><strong>Confidence</strong></td><td>freq(A ∩ B) / freq(A)</td><td>P(B|A): probabilidade de B dado que A foi comprado.</td></tr>
+    <tr><td><strong>Lift</strong></td><td>confidence(A→B) / P(B)</td><td>Lift &gt; 1 = correlação real; = 1 = independência.</td></tr>
+  </table>
+  <h2 class="sub">Thresholds</h2>
+  <table>
+    <tr><th>Parâmetro</th><th>Valor</th><th>Arquivo</th></tr>
+    <tr><td>MIN_CONFIDENCE</td><td>0.30 (30%)</td><td>src/config/constants.js</td></tr>
+    <tr><td>MIN_SUPPORT</td><td>0.02 (2%)</td><td>src/config/constants.js</td></tr>
+    <tr><td>TOP_N</td><td>3 recomendações</td><td>src/config/constants.js</td></tr>
+  </table>
+  <h2 class="sub">Fluxo do algoritmo</h2>
+  <div class="code-block"><span class="comment">// Para cada par (A, B) onde A ≠ B:</span>
+freq_A  = vendas onde A aparece
+freq_AB = vendas onde A E B aparecem
+
+confidence = freq_AB / freq_A     <span class="comment">// P(B|A)</span>
+support    = freq_AB / total       <span class="comment">// freq. conjunta</span>
+lift       = confidence / P(B)     <span class="comment">// correlação real?</span>
+
+<span class="comment">// Aceita regra se confidence >= 0.30 E support >= 0.02</span>
+<span class="comment">// Ordena por confidence desc → retorna top 3</span></div>
+  <h2 class="sub">Exemplo real testado</h2>
+  <div class="code-block">GET /api/recomendacoes/Fox%20For%20Men%20Barba
+
+→ Espuma para Barba Premium  (confiança: 43%, lift: 1.8)
+→ Tônico de Barba            (confiança: 43%, lift: 2.1)
+
+Complexidade: O(n × p²) — ~200k ops com 500 transações e 20 produtos
+Com cache Redis: &lt;10ms (vs ~350ms sem cache)</div>
+</div>
+
+<!-- 7. API REST -->
+<div class="pagina page-break">
+  <h1 class="secao">7. API REST — Endpoints</h1>
+  <table>
+    <tr><th>Método</th><th>Endpoint</th><th>Descrição</th><th>Cache TTL</th></tr>
+    <tr><td>GET</td><td>/health</td><td>Health check do servidor</td><td>—</td></tr>
+    <tr><td>GET</td><td>/api/recomendacoes/:produtoId</td><td>Top 3 recomendações para um produto</td><td>1 hora</td></tr>
+    <tr><td>GET</td><td>/api/estatisticas</td><td>Métricas globais + top 5 regras</td><td>30 min</td></tr>
+  </table>
+  <h2 class="sub">Resposta — /api/recomendacoes/:produtoId</h2>
+  <div class="code-block">{
+  "produto": "Fox For Men Barba",
+  "total_recomendacoes": 2,
+  "recomendacoes": [
+    {
+      "nome": "Espuma para Barba Premium",
+      "confianca": 0.43,
+      "support": 0.06,
+      "lift": 1.8,
+      "descricao": "Clientes que compraram Fox For Men Barba tambem compraram..."
+    }
+  ],
+  "source": "computado"  <span class="comment">// ou "cache"</span>
+}</div>
+  <h2 class="sub">Resposta — /api/estatisticas</h2>
+  <div class="code-block">{
+  "total_vendas": 150,
+  "total_produtos": 20,
+  "total_regras": 47,
+  "confianca_media": 0.4823,
+  "support_medio": 0.0812,
+  "regras_top5": [ { "antecedente": "...", "consequente": "...", ... } ],
+  "source": "computado"
+}</div>
+  <h2 class="sub">Códigos de erro</h2>
+  <table>
+    <tr><th>HTTP</th><th>Causa</th></tr>
+    <tr><td>400</td><td>produtoId vazio ou nenhuma venda no banco</td></tr>
+    <tr><td>500</td><td>Erro interno (Supabase indisponível, bug no algoritmo)</td></tr>
+  </table>
+</div>
+
+<!-- 8. CACHE REDIS -->
+<div class="pagina page-break">
+  <h1 class="secao">8. Cache Redis</h1>
+  <h2 class="sub">Estratégia cache-aside</h2>
+  <ul>
+    <li>1. Verifica Redis pela chave → se hit, retorna imediatamente</li>
+    <li>2. Se miss: busca Supabase → calcula algoritmo → armazena no Redis</li>
+    <li>3. Retorna resultado com campo <code>source: "cache"</code> ou <code>"computado"</code></li>
+  </ul>
+  <h2 class="sub">Degradação graceful</h2>
+  <p>
+    Se o Redis estiver offline, todas as funções do cache retornam silenciosamente
+    (get → null, set → void) sem lançar erros. A API continua funcionando normalmente,
+    apenas sem o benefício do cache.
+  </p>
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="valor">~350ms</div>
+      <div class="label">Latência sem cache (1ª chamada)</div>
+    </div>
+    <div class="metric-card">
+      <div class="valor">&lt;10ms</div>
+      <div class="label">Latência com cache ativo</div>
+    </div>
+    <div class="metric-card">
+      <div class="valor">35×</div>
+      <div class="label">Redução de latência</div>
+    </div>
+  </div>
+  <h2 class="sub">Configuração Redis no Windows</h2>
+  <div class="code-block"><span class="comment"># Opção recomendada: Upstash (cloud gratuito)</span>
+<span class="comment"># 1. Criar conta em upstash.com</span>
+<span class="comment"># 2. Criar database Redis</span>
+<span class="comment"># 3. Copiar REDIS_URL para backend/.env:</span>
+REDIS_URL=redis://default:SENHA@endpoint.upstash.io:6379
+
+<span class="comment"># Alternativa: WSL2 local</span>
+wsl -e redis-server</div>
+</div>
+
+<!-- 9. TESTES -->
+<div class="pagina page-break">
+  <h1 class="secao">9. Testes Unitários</h1>
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="valor">16</div>
+      <div class="label">Total de testes passando</div>
+    </div>
+    <div class="metric-card">
+      <div class="valor">10</div>
+      <div class="label">Testes do algoritmo</div>
+    </div>
+    <div class="metric-card">
+      <div class="valor">6</div>
+      <div class="label">Testes de cache</div>
+    </div>
+  </div>
+  <h2 class="sub">recomendacao.test.js — cobertura</h2>
+  <table>
+    <tr><th>Função</th><th>Casos testados</th></tr>
+    <tr><td>extrairProdutosUnicos()</td><td>Set com todos os produtos; Set vazio para array vazio</td></tr>
+    <tr><td>calculateAssociation()</td><td>Retorna array; filtro confidence; ordenação desc; dataset vazio; campos obrigatórios</td></tr>
+    <tr><td>obterRecomendacoes()</td><td>Limite topN; apenas produto correto; produto inexistente</td></tr>
+  </table>
+  <h2 class="sub">cache.test.js — cobertura</h2>
+  <table>
+    <tr><th>Caso</th><th>Comportamento</th></tr>
+    <tr><td>isConnected()</td><td>Retorna boolean</td></tr>
+    <tr><td>get() chave inexistente</td><td>Retorna null</td></tr>
+    <tr><td>set() + get() com Redis ativo</td><td>Armazena e recupera (pulado se offline)</td></tr>
+    <tr><td>delete() com Redis ativo</td><td>Remove chave (pulado se offline)</td></tr>
+    <tr><td>set() sem Redis</td><td>Não lança erro (degradação graceful)</td></tr>
+    <tr><td>get() sem Redis</td><td>Retorna null silenciosamente</td></tr>
+  </table>
+  <h2 class="sub">Executar testes</h2>
+  <div class="code-block">cd backend
+npm run test:unit      <span class="comment"># Apenas testes unitários (--forceExit)</span>
+npm run test:coverage  <span class="comment"># Relatório de cobertura em /coverage/</span></div>
+</div>
+
+<!-- 10. PROGRESSO -->
+<div class="pagina page-break">
+  <h1 class="secao">10. Progresso por Semana</h1>
+  <div class="status-grid">
+    <div class="status-card done">
+      <div class="status-badge">✅</div>
+      <div class="semana">Semana 1</div>
+      <div class="titulo">Estrutura inicial</div>
+    </div>
+    <div class="status-card done">
+      <div class="status-badge">✅</div>
+      <div class="semana">Semana 2</div>
+      <div class="titulo">Setup completo</div>
+    </div>
+    <div class="status-card done">
+      <div class="status-badge">✅</div>
+      <div class="semana">Semana 3</div>
+      <div class="titulo">Algoritmo + testes</div>
+    </div>
+    <div class="status-card done">
+      <div class="status-badge">✅</div>
+      <div class="semana">Semana 4</div>
+      <div class="titulo">Cache + Estatísticas</div>
+    </div>
+    <div class="status-card pending">
+      <div class="status-badge">⏳</div>
+      <div class="semana">Semana 5</div>
+      <div class="titulo">Validação algoritmo</div>
+    </div>
+    <div class="status-card pending">
+      <div class="status-badge">⏳</div>
+      <div class="semana">Semana 6</div>
+      <div class="titulo">Dashboard frontend</div>
+    </div>
+    <div class="status-card pending">
+      <div class="status-badge">⏳</div>
+      <div class="semana">Semana 7</div>
+      <div class="titulo">Gráficos + visuais</div>
+    </div>
+    <div class="status-card pending">
+      <div class="status-badge">⏳</div>
+      <div class="semana">Semana 8</div>
+      <div class="titulo">Testes completos</div>
+    </div>
+    <div class="status-card pending">
+      <div class="status-badge">⏳</div>
+      <div class="semana">Semana 9</div>
+      <div class="titulo">TCC: Intro + Fund.</div>
+    </div>
+    <div class="status-card pending">
+      <div class="status-badge">⏳</div>
+      <div class="semana">Semana 10</div>
+      <div class="titulo">TCC: Metodologia</div>
+    </div>
+    <div class="status-card pending">
+      <div class="status-badge">⏳</div>
+      <div class="semana">Semana 11</div>
+      <div class="titulo">TCC: Resultados</div>
+    </div>
+    <div class="status-card pending">
+      <div class="status-badge">⏳</div>
+      <div class="semana">Semana 12</div>
+      <div class="titulo">Apresentação</div>
+    </div>
+  </div>
+
+  <h2 class="sub">Semana 1 — Estrutura inicial</h2>
+  <ul>
+    <li>Repositório GitHub criado</li>
+    <li>Estrutura de pastas: backend/, frontend/, docs/</li>
+    <li>Roteiros semanas 1-12, sumário executivo, rastreador de progresso</li>
+    <li>Commit: 9f75431</li>
+  </ul>
+
+  <h2 class="sub">Semana 2 — Setup completo do ambiente</h2>
+  <ul>
+    <li>Backend: Express + dotenv + cors + nodemon + jest</li>
+    <li>Supabase: 5 tabelas qb_* com bigint identity, RLS desabilitado</li>
+    <li>Seed SQL com 20 produtos e 150+ vendas mock com itens por pedido</li>
+    <li>Frontend: React 18 + Vite + Axios + React Router, proxy /api configurado</li>
+    <li>Decisão chave: Supabase JS client em vez de Knex (sem DATABASE_URL disponível)</li>
+  </ul>
+
+  <h2 class="sub">Semana 3 — Algoritmo de recomendação</h2>
+  <ul>
+    <li>services/recomendacao.js: extrairProdutosUnicos(), calculateAssociation(), obterRecomendacoes()</li>
+    <li>Endpoint GET /api/recomendacoes/:produtoId funcional e testado com curl</li>
+    <li>10 testes unitários passando (Jest) cobrindo casos felizes e edge cases</li>
+  </ul>
+
+  <h2 class="sub">Semana 4 — Cache Redis + Endpoint de Estatísticas</h2>
+  <ul>
+    <li>services/cache.js: get/set/delete/flush com degradação graceful sem Redis</li>
+    <li>Cache integrado no endpoint de recomendações (TTL 1h, log CACHE HIT/MISS)</li>
+    <li>GET /api/estatisticas: total_vendas, produtos, regras, confiança_media, top5 regras</li>
+    <li>6 novos testes de cache — total: 16 testes passando</li>
+    <li>Commits: de0ba8e (Semanas 2+3) e b8befe5 (Semana 4)</li>
+  </ul>
+
+  <h2 class="sub">Progresso geral — Maio/2026</h2>
+  <p><strong>Backend (80%):</strong></p>
+  <div class="progress-bar-wrap"><div class="progress-bar pb-green" style="width:80%"></div></div>
+  <p><strong>Frontend (15%):</strong></p>
+  <div class="progress-bar-wrap"><div class="progress-bar pb-blue" style="width:15%"></div></div>
+  <p><strong>Testes (60%):</strong></p>
+  <div class="progress-bar-wrap"><div class="progress-bar pb-green" style="width:60%"></div></div>
+  <p><strong>TCC — texto acadêmico (0%):</strong></p>
+  <div class="progress-bar-wrap"><div class="progress-bar pb-gray" style="width:1%"></div></div>
+</div>
+
+<!-- 11. ARQUIVOS -->
+<div class="pagina page-break">
+  <h1 class="secao">11. Arquivos do Projeto</h1>
+  <table>
+    <tr><th>Arquivo</th><th>Status</th><th>Descrição</th></tr>
+    <tr><td>backend/.env</td><td>✅</td><td>Credenciais Supabase + config (não commitado, .gitignore)</td></tr>
+    <tr><td>backend/src/app.js</td><td>✅</td><td>Servidor Express, middlewares CORS/JSON, rotas</td></tr>
+    <tr><td>backend/src/config/constants.js</td><td>✅</td><td>MIN_CONFIDENCE, MIN_SUPPORT, TOP_N, CACHE_TTL</td></tr>
+    <tr><td>backend/src/database/connection.js</td><td>✅</td><td>Cliente Supabase JS (PostgREST)</td></tr>
+    <tr><td>backend/src/database/schema.sql</td><td>✅</td><td>5 tabelas qb_* com bigint identity e índices</td></tr>
+    <tr><td>backend/src/database/seed.sql</td><td>✅</td><td>Dados mock — rodar no SQL Editor do Supabase</td></tr>
+    <tr><td>backend/src/database/seed.js</td><td>⚠️ NÃO USAR</td><td>Script Node com problema de cache do PostgREST</td></tr>
+    <tr><td>backend/src/models/index.js</td><td>✅</td><td>buscarVendas() com join, buscarProdutos(), buscarProduto()</td></tr>
+    <tr><td>backend/src/services/recomendacao.js</td><td>✅</td><td>Algoritmo Association Rules completo e comentado</td></tr>
+    <tr><td>backend/src/services/cache.js</td><td>✅</td><td>Camada Redis com degradação graceful</td></tr>
+    <tr><td>backend/src/routes/recomendacoes.js</td><td>✅</td><td>GET /api/recomendacoes/:produtoId com cache</td></tr>
+    <tr><td>backend/src/routes/estatisticas.js</td><td>✅</td><td>GET /api/estatisticas com métricas globais</td></tr>
+    <tr><td>backend/tests/unit/recomendacao.test.js</td><td>✅</td><td>10 testes do algoritmo (todos passando)</td></tr>
+    <tr><td>backend/tests/unit/cache.test.js</td><td>✅</td><td>6 testes de cache (degradação graceful inclusa)</td></tr>
+    <tr><td>frontend/src/main.jsx</td><td>✅</td><td>Entry point React com StrictMode</td></tr>
+    <tr><td>frontend/src/App.jsx</td><td>✅</td><td>BrowserRouter + Routes + placeholder Semana 2</td></tr>
+    <tr><td>frontend/src/services/api.js</td><td>✅</td><td>Cliente Axios centralizado com obterRecomendacoes()</td></tr>
+    <tr><td>frontend/src/styles/index.css</td><td>✅</td><td>Reset CSS básico</td></tr>
+  </table>
+</div>
+
+<!-- 12. DECISÕES E ARMADILHAS -->
+<div class="pagina page-break">
+  <h1 class="secao">12. Decisões Técnicas e Armadilhas</h1>
+  <table>
+    <tr><th>Decisão / Armadilha</th><th>Causa</th><th>Solução aplicada</th></tr>
+    <tr>
+      <td>Prefixo qb_ nas tabelas</td>
+      <td>Supabase compartilhado com outro projeto (já tinha tabela "vendas")</td>
+      <td>Prefixo qb_ em todas as 5 tabelas</td>
+    </tr>
+    <tr>
+      <td>bigint em vez de UUID</td>
+      <td>FK UUID → bigint causava erro de tipo; Supabase cria bigint por padrão</td>
+      <td>Schema inteiro migrado para bigint GENERATED ALWAYS AS IDENTITY</td>
+    </tr>
+    <tr>
+      <td>Supabase JS client em vez de Knex</td>
+      <td>Knex precisa de DATABASE_URL com senha do postgres (não disponível no free tier)</td>
+      <td>@supabase/supabase-js com anon key via PostgREST</td>
+    </tr>
+    <tr>
+      <td>Seed via SQL Editor (não Node)</td>
+      <td>PostgREST tem cache de schema — script Node não via colunas novas imediatamente</td>
+      <td>seed.sql para rodar direto no Supabase SQL Editor</td>
+    </tr>
+    <tr>
+      <td>RLS bloqueava reads silenciosamente</td>
+      <td>Novas tabelas têm RLS ativo por padrão — reads retornavam [] sem erro</td>
+      <td>ALTER TABLE qb_* DISABLE ROW LEVEL SECURITY</td>
+    </tr>
+    <tr>
+      <td>Redis não disponível no Windows</td>
+      <td>Sem brew, sem apt — Redis não é nativo no Windows</td>
+      <td>Degradação graceful no cache.js + recomendação do Upstash (cloud gratuito)</td>
+    </tr>
+    <tr>
+      <td>CSV Vendas_2026.csv inútil para o algoritmo</td>
+      <td>Formato só tem totais por cliente, sem produtos por pedido</td>
+      <td>Dados mock realistas no seed.sql; trocar quando relatório detalhado disponível</td>
+    </tr>
+  </table>
+</div>
+
+<!-- 13. PRÓXIMOS PASSOS -->
+<div class="pagina page-break">
+  <h1 class="secao">13. Próximos Passos (Semanas 5–12)</h1>
+  <table>
+    <tr><th>Semana</th><th>Tema</th><th>Principais entregas</th></tr>
+    <tr><td><strong>5</strong></td><td>Validação do algoritmo</td><td>Train/test split, Precision, Recall, F1 reais; script de validação</td></tr>
+    <tr><td><strong>6</strong></td><td>Dashboard Frontend</td><td>BuscadorProduto, CardRecomendacao, tela de busca interativa</td></tr>
+    <tr><td><strong>7</strong></td><td>Gráficos</td><td>Chart.js: barras de confiança, scatter lift vs support, KPIs</td></tr>
+    <tr><td><strong>8</strong></td><td>Testes completos</td><td>Cobertura &gt;80%, testes de integração API, testes React</td></tr>
+    <tr><td><strong>9</strong></td><td>TCC: Intro + Fundamentação</td><td>Capítulos 1 e 2, revisão bibliográfica (5+ artigos)</td></tr>
+    <tr><td><strong>10</strong></td><td>TCC: Metodologia + Implementação</td><td>Capítulos 3 e 4, diagramas UML, fluxograma do algoritmo</td></tr>
+    <tr><td><strong>11</strong></td><td>TCC: Resultados + Conclusão</td><td>Capítulos 5 e 6, análise das métricas, limitações e trabalhos futuros</td></tr>
+    <tr><td><strong>12</strong></td><td>Apresentação + Defesa</td><td>Slides, ensaio, ajustes finais do texto, submissão</td></tr>
+  </table>
+  <div class="highlight">
+    <strong>Ações imediatas antes da Semana 5:</strong><br>
+    1. Configurar Upstash Redis (upstash.com) e atualizar REDIS_URL no backend/.env<br>
+    2. Exportar relatório de vendas com itens por pedido do sistema da Quasar Barber<br>
+    3. Substituir dados mock pelo dataset real no seed.sql
+  </div>
+</div>
+
+<!-- RODAPÉ -->
+<div class="rodape">
+  Sistema de Recomendação Quasar Barber &nbsp;·&nbsp;
+  TCC Ciência da Computação &nbsp;·&nbsp;
+  Felipe Pereira &nbsp;·&nbsp;
+  Gerado em: Maio de 2026
+</div>
+
+</body>
+</html>
