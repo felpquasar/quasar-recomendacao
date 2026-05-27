@@ -3,6 +3,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const recomendacoesRoutes = require('./routes/recomendacoes');
+const estatisticasRoutes = require('./routes/estatisticas');
 
 const app = express();
 
@@ -16,5 +17,6 @@ app.get('/health', (req, res) => {
 });
 
 app.use('/api/recomendacoes', recomendacoesRoutes);
+app.use('/api/estatisticas', estatisticasRoutes);
 
 module.exports = app;
