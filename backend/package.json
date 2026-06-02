@@ -10,7 +10,8 @@
     "test:unit": "jest tests/unit --forceExit",
     "test:integration": "jest tests/integration",
     "test:coverage": "jest --coverage",
-    "seed": "node src/database/seed.js"
+    "seed": "node src/database/seed.js",
+    "seed:csv": "node src/database/seed-csv.js"
   },
   "keywords": [
     "recomendacao",
