@@ -113,24 +113,39 @@ async function seed() {
 
   // ── 1. Extrair clientes únicos ────────────────────────────────────────────
   const clientesUnicos = [...new Set(pedidos.map((p) => p.cliente))].filter(Boolean);
-  console.log(`Inserindo ${clientesUnicos.length} clientes...`);
+  console.log(`Processando ${clientesUnicos.length} clientes...`);
 
-  const { data: clientesInseridos, error: errClientes } = await supabase
+  // Busca clientes já existentes para evitar duplicatas
+  const { data: clientesExistentes } = await supabase
     .from('qb_clientes')
-    .upsert(
-      clientesUnicos.map((nome) => ({ nome_loja: nome, cidade: 'Codó', estado: 'MA' })),
-      { onConflict: 'nome_loja', ignoreDuplicates: false }
-    )
-    .select();
-
-  if (errClientes) {
-    console.error('Erro ao inserir clientes:', errClientes.message);
-    process.exit(1);
-  }
+    .select('id, nome_loja');
 
   const clienteMap = {};
-  for (const c of clientesInseridos) clienteMap[c.nome_loja] = c.id;
-  console.log(`✓ ${clientesInseridos.length} clientes prontos`);
+  const existentesSet = new Set();
+  for (const c of (clientesExistentes || [])) {
+    clienteMap[c.nome_loja] = c.id;
+    existentesSet.add(c.nome_loja);
+  }
+
+  const clientesNovos = clientesUnicos
+    .filter((nome) => !existentesSet.has(nome))
+    .map((nome) => ({ nome_loja: nome, cidade: 'Codó', estado: 'MA' }));
+
+  if (clientesNovos.length > 0) {
+    const { data: inseridos, error: errClientes } = await supabase
+      .from('qb_clientes')
+      .insert(clientesNovos)
+      .select();
+
+    if (errClientes) {
+      console.error('Erro ao inserir clientes:', errClientes.message);
+      process.exit(1);
+    }
+    for (const c of inseridos) clienteMap[c.nome_loja] = c.id;
+    console.log(`✓ ${inseridos.length} novos clientes inseridos (${existentesSet.size} já existiam)`);
+  } else {
+    console.log(`✓ Todos os ${clientesUnicos.length} clientes já existem no banco`);
+  }
 
   // ── 2. Extrair produtos únicos ────────────────────────────────────────────
   const produtosUnicos = new Map();
@@ -148,22 +163,38 @@ async function seed() {
   }
 
   const produtosArray = Array.from(produtosUnicos.values());
-  console.log(`\nInserindo ${produtosArray.length} produtos...`);
+  console.log(`\nProcessando ${produtosArray.length} produtos...`);
   produtosArray.forEach((p) => console.log(`  [${p.categoria}] ${p.nome}`));
 
-  const { data: produtosInseridos, error: errProdutos } = await supabase
+  // Busca produtos já existentes
+  const { data: produtosExistentes } = await supabase
     .from('qb_produtos')
-    .upsert(produtosArray, { onConflict: 'nome', ignoreDuplicates: false })
-    .select();
-
-  if (errProdutos) {
-    console.error('Erro ao inserir produtos:', errProdutos.message);
-    process.exit(1);
-  }
+    .select('id, nome');
 
   const produtoMap = {};
-  for (const p of produtosInseridos) produtoMap[p.nome] = p.id;
-  console.log(`✓ ${produtosInseridos.length} produtos prontos`);
+  const produtosExistentesSet = new Set();
+  for (const p of (produtosExistentes || [])) {
+    produtoMap[p.nome] = p.id;
+    produtosExistentesSet.add(p.nome);
+  }
+
+  const produtosNovos = produtosArray.filter((p) => !produtosExistentesSet.has(p.nome));
+
+  if (produtosNovos.length > 0) {
+    const { data: inseridos, error: errProdutos } = await supabase
+      .from('qb_produtos')
+      .insert(produtosNovos)
+      .select();
+
+    if (errProdutos) {
+      console.error('Erro ao inserir produtos:', errProdutos.message);
+      process.exit(1);
+    }
+    for (const p of inseridos) produtoMap[p.nome] = p.id;
+    console.log(`✓ ${inseridos.length} novos produtos inseridos (${produtosExistentesSet.size} já existiam)`);
+  } else {
+    console.log(`✓ Todos os ${produtosArray.length} produtos já existem no banco`);
+  }
 
   // ── 3. Inserir vendas e itens ────────────────────────────────────────────
   console.log('\nInserindo vendas e itens...');
@@ -244,8 +275,8 @@ async function seed() {
 
   // ── Resumo ────────────────────────────────────────────────────────────────
   console.log('\n─────────────────────────────────');
-  console.log(`✓ ${clientesInseridos.length} clientes`);
-  console.log(`✓ ${produtosInseridos.length} produtos`);
+  console.log(`✓ ${clientesUnicos.length} clientes`);
+  console.log(`✓ ${produtosArray.length} produtos`);
   console.log(`✓ ${totalVendas} vendas`);
   console.log(`✓ ${totalItens} itens de venda`);
   if (erros > 0) console.warn(`⚠ ${erros} erro(s) — verifique logs acima`);

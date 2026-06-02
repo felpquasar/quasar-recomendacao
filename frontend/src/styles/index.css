@@ -1,3 +1,27 @@
+/*
+ * styles/index.css
+ * =================
+ * Estilos globais do Sistema de Recomendação - Quasar Barber (Semana 6).
+ *
+ * TEMA DE CORES:
+ *   Preto (#1a1a1a) + Dourado (#d4af37) → identidade visual de barbearia premium
+ *   Laranja (#ff6b35) → acento de energia / chamada para ação
+ *
+ * ORGANIZAÇÃO:
+ *   1. Variáveis CSS (custom properties) → facilita manutenção de cores
+ *   2. Reset básico → consistência entre browsers
+ *   3. Header → faixa preta com gradiente e borda dourada
+ *   4. Stats cards → 4 KPIs em grid responsivo
+ *   5. Buscador → input + botão lado a lado
+ *   6. Cards de recomendação → borda dourada + barra de progresso
+ *   7. Estados especiais → sem resultados, erro, badge cache
+ *   8. Responsivo → breakpoint 600px para mobile
+ *
+ * RESPONSIVIDADE:
+ *   Desktop (>600px): stat-cards em 4 colunas, cards em até 3 colunas
+ *   Mobile (<600px): tudo empilhado em 1 coluna, input e botão empilhados
+ */
+
 :root {
   --cor-primaria: #1a1a1a;
   --cor-secundaria: #d4af37;
