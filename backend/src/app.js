@@ -17,6 +17,7 @@
  *   GET /api/recomendacoes/:produtoId  → Recomendações para um produto
  *   GET /api/estatisticas              → Métricas globais do sistema
  *   GET /api/validacao                 → Precision, Recall, F1 (train/test split)
+ *   GET /api/produtos?q=<termo>        → Busca parcial de produtos (autocomplete)
  *
  * O servidor é iniciado em server.js (não aqui) para facilitar os testes
  * de integração com supertest, que importam o app sem subir o servidor.
@@ -29,6 +30,7 @@ require('dotenv').config();
 const recomendacoesRoutes = require('./routes/recomendacoes');
 const estatisticasRoutes = require('./routes/estatisticas');
 const validacaoRoutes = require('./routes/validacao');
+const produtosRoutes = require('./routes/produtos');
 
 const app = express();
 
@@ -53,5 +55,6 @@ app.get('/health', (req, res) => {
 app.use('/api/recomendacoes', recomendacoesRoutes);
 app.use('/api/estatisticas', estatisticasRoutes);
 app.use('/api/validacao', validacaoRoutes);
+app.use('/api/produtos', produtosRoutes);
 
 module.exports = app;

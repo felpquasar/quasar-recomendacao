@@ -26,6 +26,7 @@
 import { useState, useEffect } from 'react';
 import BuscadorProduto from '../components/BuscadorProduto';
 import ResultadosBusca from '../components/ResultadosBusca';
+import GraficoRegras from '../components/GraficoRegras';
 import { recomendacaoService } from '../services/api';
 
 export default function Dashboard() {
@@ -103,6 +104,9 @@ export default function Dashboard() {
 
         {/* Só renderiza se recomendacoes !== null (após pelo menos uma busca) */}
         <ResultadosBusca dados={recomendacoes} />
+
+        {/* Gráficos das regras de associação (Semana 7) — usa as mesmas stats */}
+        {!loadingStats && stats && <GraficoRegras stats={stats} />}
       </main>
 
       {/* ── Rodapé informativo ── */}

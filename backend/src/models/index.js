@@ -107,4 +107,31 @@ async function buscarProduto(nome) {
   return data;
 }
 
-module.exports = { buscarVendas, buscarProdutos, buscarProduto };
+/**
+ * buscarProdutosPorTermo(termo, limite)
+ * Busca múltiplos produtos cujo nome contém o termo (ILIKE parcial,
+ * case-insensitive). Diferente de buscarProduto(), que retorna só o
+ * primeiro match, esta função alimenta o autocomplete do frontend:
+ * o usuário digita "balm" e recebe todos os produtos que batem.
+ *
+ * Ordena por nome para resultado previsível e limita a quantidade
+ * para não inundar o dropdown (padrão 10).
+ *
+ * @param {string} termo  - Texto parcial digitado pelo usuário
+ * @param {number} limite - Máximo de sugestões retornadas (padrão 10)
+ * @returns {Array<object>} Lista de produtos (vazia se nada bater)
+ */
+async function buscarProdutosPorTermo(termo, limite = 10) {
+  const { data, error } = await supabase
+    .from('qb_produtos')
+    .select('id, nome, categoria')
+    .eq('ativo', true)
+    .ilike('nome', `%${termo}%`)
+    .order('nome', { ascending: true })
+    .limit(limite);
+
+  if (error) throw new Error(error.message);
+  return data || [];
+}
+
+module.exports = { buscarVendas, buscarProdutos, buscarProduto, buscarProdutosPorTermo };

@@ -351,6 +351,105 @@ body {
   margin-top: 3rem;
 }
 
+/* ── Autocomplete (Semana 7) ── */
+/* Wrapper relativo: o input ocupa a largura; o dropdown flutua sobre o conteúdo */
+.busca-input-wrapper {
+  position: relative;
+  flex: 1;
+}
+
+.busca-input-wrapper .busca-input {
+  width: 100%;
+}
+
+.autocomplete-lista {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--cor-branco);
+  border: 1px solid var(--cor-borda);
+  border-radius: 6px;
+  box-shadow: var(--sombra);
+  list-style: none;
+  max-height: 260px;
+  overflow-y: auto;
+  z-index: 20; /* acima dos cards de resultado */
+}
+
+.autocomplete-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.15s;
+}
+
+.autocomplete-item:last-child { border-bottom: none; }
+
+.autocomplete-item:hover {
+  background: #faf6e8; /* dourado bem claro */
+}
+
+.autocomplete-nome {
+  font-weight: 500;
+  color: var(--cor-primaria);
+}
+
+.autocomplete-categoria {
+  font-size: 0.75rem;
+  color: #888;
+  background: #f4f4f6;
+  padding: 0.15rem 0.55rem;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+
+/* ── Gráficos (Semana 7) ── */
+.graficos-section {
+  margin-top: 2.5rem;
+}
+
+.graficos-titulo {
+  font-size: 1.3rem;
+  color: var(--cor-primaria);
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--cor-secundaria);
+}
+
+.graficos-vazio {
+  color: #666;
+  background: var(--cor-branco);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: var(--sombra);
+  text-align: center;
+}
+
+.graficos-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.grafico-card {
+  background: var(--cor-branco);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: var(--sombra);
+  height: 340px; /* altura fixa: Chart.js usa maintainAspectRatio:false */
+}
+
+/* O gráfico de barras (top 10) ocupa a largura inteira por ter rótulos longos */
+.grafico-largo {
+  grid-column: 1 / -1;
+  height: 420px;
+}
+
 /* ── Responsivo ── */
 @media (max-width: 600px) {
   .dashboard-header h1 { font-size: 1.5rem; }
@@ -360,4 +459,8 @@ body {
   .stats-container { grid-template-columns: repeat(2, 1fr); }
 
   .cards-grid { grid-template-columns: 1fr; }
+
+  .graficos-grid { grid-template-columns: 1fr; }
+
+  .grafico-card { height: 300px; }
 }

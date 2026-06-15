@@ -50,6 +50,11 @@ export const recomendacaoService = {
   // Busca métricas globais do sistema (total de vendas, produtos, regras)
   obterEstatisticas: () =>
     api.get('/api/estatisticas'),
+
+  // Busca parcial de produtos para o autocomplete (GET /api/produtos?q=)
+  // Usa o parâmetro params do axios para montar a query string com encoding correto
+  buscarProdutos: (termo) =>
+    api.get('/api/produtos', { params: { q: termo } }),
 };
 
 export default api;

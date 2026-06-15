@@ -69,20 +69,43 @@ router.get('/', async (req, res) => {
       ? regras.reduce((acc, r) => acc + r.support, 0) / regras.length
       : 0;
 
+    // Distribuição de produtos por categoria — alimenta o gráfico de
+    // pizza/rosca do dashboard. Conta quantos produtos há em cada categoria.
+    const distribuicaoCategorias = produtos.reduce((acc, p) => {
+      const cat = p.categoria || 'Sem categoria';
+      acc[cat] = (acc[cat] || 0) + 1;
+      return acc;
+    }, {});
+
+    // Função auxiliar para serializar uma regra no formato do frontend
+    const serializarRegra = r => ({
+      antecedente: r.antecedente,
+      consequente: r.consequente,
+      confidence: r.confidence,
+      support: r.support,
+      lift: r.lift,
+    });
+
     const resultado = {
       total_vendas: vendas.length,          // Total de transações no dataset
       total_produtos: produtos.length,       // Total de produtos ativos no catálogo
       total_regras: regras.length,           // Regras que passaram nos thresholds
       confianca_media: parseFloat(confiancaMedia.toFixed(4)),
       support_medio: parseFloat(supportMedio.toFixed(4)),
-      // Top 5 regras para exibir no dashboard (já ordenadas por confidence)
-      regras_top5: regras.slice(0, 5).map(r => ({
+      // Top 5 regras (mantido para compatibilidade com os KPI cards)
+      regras_top5: regras.slice(0, 5).map(serializarRegra),
+      // Top 10 regras (por confidence) para o gráfico de barras do dashboard
+      regras_top10: regras.slice(0, 10).map(serializarRegra),
+      // Todas as regras para o scatter lift × support (limitado a 50 para
+      // não inflar o payload em datasets grandes)
+      regras_scatter: regras.slice(0, 50).map(r => ({
         antecedente: r.antecedente,
         consequente: r.consequente,
-        confidence: r.confidence,
         support: r.support,
         lift: r.lift,
       })),
+      // { "Cabelo": 18, "Barba": 9, "Acessórios": 6 } — para o gráfico de rosca
+      distribuicao_categorias: distribuicaoCategorias,
     };
 
     // Cache por 30 min (1800s) — mais curto que recomendações para refletir novas vendas
