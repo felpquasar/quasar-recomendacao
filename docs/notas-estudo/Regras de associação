@@ -1,0 +1,37 @@
+🔑 O que são regras de associação
+São expressões do tipo “Se X, então Y” (ex.: Se o cliente compra leite, então também compra pão).
+
+Cada regra é avaliada por métricas como suporte, confiança e lift, que medem frequência, probabilidade e força da relação.
+
+⚙️ Como funcionam
+Identificação de conjuntos frequentes
+
+O algoritmo (como o Apriori) busca combinações de itens que aparecem juntos em muitas transações.
+
+Geração de regras
+
+A partir desses conjuntos, cria-se regras do tipo X → Y.
+
+Avaliação das regras
+
+Usa-se suporte, confiança e lift para decidir se a regra é útil ou apenas coincidência.
+
+📊 Exemplo prático
+Regra: {Leite} → {Pão}
+
+Suporte: 20% das compras têm leite e pão juntos.
+
+Confiança: 70% das compras com leite também incluem pão.
+
+Lift: 1,5 (significa que a compra de leite aumenta em 50% a chance de comprar pão, comparado ao acaso).
+
+🛒 Aplicações reais
+Supermercados: planejar promoções cruzadas (ex.: desconto em café se comprar açúcar).
+
+E-commerce: recomendações automáticas (“Quem comprou este produto também levou…”).
+
+Marketing: entender hábitos de consumo e segmentar clientes.
+
+Saúde: analisar quais medicamentos são frequentemente prescritos juntos.
+
+👉 Em resumo, regras de associação transformam dados de transações em insights acionáveis, revelando padrões escondidos que ajudam empresas a vender mais e clientes a receber recomendações mais relevantes.

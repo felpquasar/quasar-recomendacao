@@ -1,0 +1,40 @@
+🔄 Etapas do Apriori
+Definir parâmetros mínimos
+
+Suporte mínimo e confiança mínima (limiares que filtram regras pouco relevantes).
+
+Encontrar conjuntos frequentes de itens
+
+O algoritmo começa com itens individuais e calcula o suporte.
+
+Depois combina pares, trios, etc., mantendo apenas os que superam o suporte mínimo.
+
+Gerar regras de associação
+
+A partir dos conjuntos frequentes, cria regras do tipo X → Y.
+
+Exemplo: {Leite} → {Pão}.
+
+Avaliar regras
+
+Calcula métricas:
+
+Suporte: frequência da combinação.
+
+Confiança: probabilidade de Y dado X.
+
+Lift: força da associação comparada ao acaso.
+
+Mantém apenas regras que superam os limiares definidos.
+
+| Etapa | Conjunto | Suporte | Regra | Confiança | Lift |
+| --- | --- | --- | --- | --- | --- |
+| 1 | {Leite, Pão} | 20% | {Leite} → {Pão} | 70% | 1.5 |
+| 2 | {Café, Açúcar} | 15% | {Café} → {Açúcar} | 80% | 2.0 |
+
+🎯 Resultado final
+O Apriori retorna apenas as regras fortes, ou seja, aquelas que realmente revelam padrões úteis.
+
+Essas regras podem ser aplicadas em promoções, recomendações de produtos e estratégias de marketing.
+
+👉 Assim, o Apriori funciona como um filtro inteligente: começa com todos os itens possíveis, elimina combinações fracas e termina com regras de associação confiáveis que ajudam a prever o comportamento do consumidor.

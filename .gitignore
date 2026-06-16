@@ -32,3 +32,6 @@ Thumbs.db
 # Test coverage
 coverage/
 .nyc_output/
+
+# Reference papers (PDFs/DOCX) — keep out of git history (large binaries)
+docs/referencias/

@@ -1,0 +1,26 @@
+📊 Objetivo: Identificar relações entre produtos que costumam ser comprados juntos em transações.
+🛒 Aplicação: Ajuda varejistas a entender padrões de compra e criar estratégias como promoções, disposição de produtos e recomendações.
+🔍 Método: Usa regras de associação para encontrar combinações frequentes de itens.
+🎯 Benefício: Permite prever comportamentos de consumo e aumentar vendas ao sugerir produtos relacionados.
+
+
+📐 Métricas usadas
+Suporte (Support): frequência com que uma combinação de itens aparece nas transações.
+Exemplo: “Leite + pão” aparece em 20% das compras.
+
+Confiança (Confidence): probabilidade de um item ser comprado dado que outro já foi adquirido.
+Exemplo: Se alguém compra leite, há 70% de chance de também comprar pão.
+
+Lift (Elevação): mede a força da associação comparada ao acaso. (verifica se o fator da compra foi coincidência ou não)
+Exemplo: Um lift > 1 indica que os itens realmente estão relacionados, não apenas coincidência.
+
+🛒 Exemplos de aplicação
+Supermercados: colocar produtos complementares próximos (ex.: chips e refrigerante).
+
+E-commerce: recomendações do tipo “Clientes que compraram este item também compraram…”.
+
+Promoções cruzadas: oferecer desconto em um produto quando outro é comprado junto.
+
+Planejamento de estoque: prever quais produtos tendem a sair juntos e otimizar reposição.
+
+👉 Em resumo, essas métricas ajudam a transformar dados de transações em estratégias práticas de vendas e marketing, aumentando tanto a satisfação do cliente quanto a receita.
