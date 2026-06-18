@@ -13,7 +13,7 @@
 
 **Tema:** Aplicação de técnicas de mineração de dados (Association Rules / Market Basket Analysis) para recomendação de produtos em comércio atacadista B2B.
 
-**Delimitação:** O estudo se restringe a um sistema de recomendação baseado exclusivamente em regras de associação extraídas do histórico transacional da Quasar Barber (distribuidora de produtos de barbearia em Codó-MA). Não abrange filtragem colaborativa, modelos de deep learning, nem recomendação em tempo real durante o checkout. O recorte de dados é o conjunto de pedidos de 2026 (33 transações, 33 produtos únicos).
+**Delimitação:** O estudo se restringe a um sistema de recomendação baseado exclusivamente em regras de associação extraídas do histórico transacional da Quasar Barber (distribuidora de produtos de barbearia em Codó-MA). Não abrange filtragem colaborativa, modelos de deep learning, nem recomendação em tempo real durante o checkout. O recorte de dados é o conjunto de pedidos de 2026 (30 transações, 29 produtos únicos).
 
 ---
 
@@ -145,9 +145,9 @@ Desenvolver e validar um sistema de recomendação de produtos B2B baseado em re
 - 4.9 Decisões de projeto e *trade-offs*
 
 ### 5. RESULTADOS E DISCUSSÃO *(≈10 págs)*
-- 5.1 Caracterização do dataset (33 transações, 33 produtos, 57 regras)
-- 5.2 Regras descobertas e análise por lift (ex.: QOD Shampoo → QOD Pomada, 100% conf., lift 11,0)
-- 5.3 Métricas globais (confiança média 71,09%; support médio 4,73%)
+- 5.1 Caracterização do dataset (30 transações, 29 produtos, 44 regras)
+- 5.2 Regras descobertas e análise por lift (ex.: After Shave → Café Verde Shampoo, 100% conf., lift 30,0)
+- 5.3 Métricas globais (confiança média 76,51%; support médio 4,39%; lift médio 12,41)
 - 5.4 Avaliação Precision/Recall/F1 e suas limitações
 - 5.5 Aderência ao conhecimento de domínio
 - 5.6 Confronto com a hipótese (H1 vs H0)

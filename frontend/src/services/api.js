@@ -55,6 +55,10 @@ export const recomendacaoService = {
   // Usa o parâmetro params do axios para montar a query string com encoding correto
   buscarProdutos: (termo) =>
     api.get('/api/produtos', { params: { q: termo } }),
+
+  // Métricas de qualidade do algoritmo (Precision, Recall, F1) via LOOCV
+  obterValidacao: () =>
+    api.get('/api/validacao'),
 };
 
 export default api;

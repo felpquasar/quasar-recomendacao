@@ -32,6 +32,7 @@ import { recomendacaoService } from '../services/api';
 export default function Dashboard() {
   const [recomendacoes, setRecomendacoes] = useState(null);
   const [stats, setStats] = useState(null);
+  const [validacao, setValidacao] = useState(null);
   const [loadingStats, setLoadingStats] = useState(true);
   const [erroStats, setErroStats] = useState('');
 
@@ -41,6 +42,11 @@ export default function Dashboard() {
       .then((res) => setStats(res.data))
       .catch(() => setErroStats('Não foi possível carregar estatísticas. Verifique se o backend está rodando.'))
       .finally(() => setLoadingStats(false));
+
+    // Métricas de qualidade (F1 via LOOCV) — carregadas em paralelo
+    recomendacaoService.obterValidacao()
+      .then((res) => setValidacao(res.data))
+      .catch(() => setValidacao(null));
   }, []); // [] = executa só uma vez, na montagem
 
   return (
@@ -78,16 +84,14 @@ export default function Dashboard() {
               <div className="stat-label">Padrões Descobertos</div>
             </div>
 
-            {/* Precision ou F1-Score — métrica de qualidade do algoritmo (Semana 5) */}
+            {/* F1-Score — métrica de qualidade do algoritmo (LOOCV, ver Cap. 3.6) */}
             <div className="stat-card destaque">
               <div className="stat-numero">
-                {stats.precision != null
-                  ? `${(stats.precision * 100).toFixed(1)}%`
-                  : `${(stats.f1_score * 100).toFixed(1)}%`}
+                {validacao && validacao.f1_score != null
+                  ? validacao.f1_score.toFixed(2)
+                  : '—'}
               </div>
-              <div className="stat-label">
-                {stats.precision != null ? 'Precisão' : 'F1-Score'}
-              </div>
+              <div className="stat-label">F1-Score (LOOCV)</div>
             </div>
           </div>
         )}

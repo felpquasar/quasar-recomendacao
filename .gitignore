@@ -35,3 +35,7 @@ coverage/
 
 # Reference papers (PDFs/DOCX) — keep out of git history (large binaries)
 docs/referencias/
+
+# MS Word temp/lock files
+~$*
+*.tmp
