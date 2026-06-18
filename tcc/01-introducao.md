@@ -63,7 +63,7 @@ A relevância deste trabalho se sustenta em três planos complementares.
 
 ## 1.6 Delimitação do escopo
 
-O estudo restringe-se a um sistema de recomendação baseado **exclusivamente** em regras de associação extraídas do histórico transacional da Quasar Barber. Não abrange filtragem colaborativa, modelos de aprendizado profundo, nem recomendação em tempo real durante o *checkout*. O recorte de dados é o conjunto de pedidos de 2026, composto por 33 transações e 33 produtos únicos — escala deliberadamente reduzida, que constitui tanto a limitação quanto o objeto central de investigação do trabalho.
+O estudo restringe-se a um sistema de recomendação baseado **exclusivamente** em regras de associação extraídas do histórico transacional da Quasar Barber. Não abrange filtragem colaborativa, modelos de aprendizado profundo, nem recomendação em tempo real durante o *checkout*. O recorte de dados é o conjunto de pedidos registrados entre abril e junho de 2026, composto por 30 transações e 29 produtos únicos — escala deliberadamente reduzida, que constitui tanto a limitação quanto o objeto central de investigação do trabalho.
 
 A escolha por uma extração de regras par-a-par (e não pelo algoritmo Apriori multi-item em sua forma completa) é igualmente parte da delimitação, justificada no Capítulo 4 pelo porte do conjunto de dados e pelo objetivo de gerar recomendações Top-N de produtos individuais.
 

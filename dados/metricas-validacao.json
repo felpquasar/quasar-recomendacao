@@ -1,0 +1,308 @@
+{
+  "gerado_em": "2026-06-18T18:03:13.325Z",
+  "dataset": {
+    "transacoes": 30,
+    "produtos": 29
+  },
+  "descritivo": {
+    "regras": 44,
+    "confianca_media": 0.7651477272727274,
+    "support_medio": 0.04392727272727276,
+    "lift_medio": 12.414772727272727
+  },
+  "validacao_split_80_20": {
+    "precision_media": 0.2222,
+    "recall_media": 0.2222,
+    "f1_media": 0.2222,
+    "detalhes": {
+      "total_treino": 24,
+      "total_teste": 6,
+      "transacoes_avaliadas": 3,
+      "accuracy_por_transacao": [
+        {
+          "transacao": 74,
+          "precision": 0.6666666666666666,
+          "recall": 0.6666666666666666,
+          "f1": 0.6666666666666666
+        },
+        {
+          "transacao": 75,
+          "precision": 0,
+          "recall": 0,
+          "f1": 0
+        },
+        {
+          "transacao": 76,
+          "precision": 0,
+          "recall": 0,
+          "f1": 0
+        }
+      ]
+    }
+  },
+  "validacao_loocv": {
+    "precision_media": 0.2639,
+    "recall_media": 0.4444,
+    "f1_media": 0.3194,
+    "detalhes": {
+      "total_transacoes": 30,
+      "transacoes_avaliadas": 14,
+      "sub_testes": 36,
+      "top_n": 3,
+      "accuracy_por_subteste": [
+        {
+          "transacao": 48,
+          "escondido": "OLEO PARA BARBA 25M - QOD",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0
+        },
+        {
+          "transacao": 48,
+          "escondido": "BALSAMO DE BARBA - QOD",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0
+        },
+        {
+          "transacao": 50,
+          "escondido": "ESCOVA DE DISFARCE BARBER PRO EM MADEIRA",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0
+        },
+        {
+          "transacao": 50,
+          "escondido": "ESCOVINHA DE DISFARCE ANNIE MODELO 2073 ORIGINAL",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0
+        },
+        {
+          "transacao": 52,
+          "escondido": "LOCAO POS BARBA SPICE WHISKY 100ML - QOD",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0
+        },
+        {
+          "transacao": 52,
+          "escondido": "AFTER SHAVE 100G - LOCAO POS BARBA - QOD",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0
+        },
+        {
+          "transacao": 52,
+          "escondido": "CAFE VERDE SHAMPOO 220ML - QOD",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0
+        },
+        {
+          "transacao": 55,
+          "escondido": "MINOXDILL KIRKLAND",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0
+        },
+        {
+          "transacao": 55,
+          "escondido": "LEAVE IN 3 EM 1 250ML - CLASSE A",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0
+        },
+        {
+          "transacao": 57,
+          "escondido": "WHISKY SHAMPOO 220ML - QOD",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0
+        },
+        {
+          "transacao": 57,
+          "escondido": "BALM 120ML - FOX FOR MEN",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0
+        },
+        {
+          "transacao": 60,
+          "escondido": "ESFOLIANTE FACIAL PRE BARBA 120G - FOX FOR MEN",
+          "precision": 0.5,
+          "recall": 1,
+          "f1": 0.6666666666666666
+        },
+        {
+          "transacao": 60,
+          "escondido": "MINOXDILL KIRKLAND",
+          "precision": 1,
+          "recall": 1,
+          "f1": 1
+        },
+        {
+          "transacao": 60,
+          "escondido": "PASTAS ORANGE 80G - FOX FOR MEN",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0
+        },
+        {
+          "transacao": 61,
+          "escondido": "ESFOLIANTE FACIAL PRE BARBA 120G - FOX FOR MEN",
+          "precision": 0.3333333333333333,
+          "recall": 1,
+          "f1": 0.5
+        },
+        {
+          "transacao": 61,
+          "escondido": "MINOXDILL KIRKLAND",
+          "precision": 0.5,
+          "recall": 1,
+          "f1": 0.6666666666666666
+        },
+        {
+          "transacao": 62,
+          "escondido": "BALM 120ML - FOX FOR MEN",
+          "precision": 0.5,
+          "recall": 1,
+          "f1": 0.6666666666666666
+        },
+        {
+          "transacao": 62,
+          "escondido": "SHAMPOO PARA BARBA 120ML - FOX FOR MEN",
+          "precision": 0.3333333333333333,
+          "recall": 1,
+          "f1": 0.5
+        },
+        {
+          "transacao": 62,
+          "escondido": "OLEO PARA BARBA SPRAY 60ML - FOX FOR MEN",
+          "precision": 0.3333333333333333,
+          "recall": 1,
+          "f1": 0.5
+        },
+        {
+          "transacao": 67,
+          "escondido": "SILVER BOOST SHAMPOO 220ML - QOD",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0
+        },
+        {
+          "transacao": 67,
+          "escondido": "OLEO PARA BARBA 25M - QOD",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0
+        },
+        {
+          "transacao": 67,
+          "escondido": "BALSAMO FORTALECEDOR DE BARBA 100G - QOD",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0
+        },
+        {
+          "transacao": 68,
+          "escondido": "KIT AFTER SHAVE 100G + CREME DE BARBEAR - QOD",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0
+        },
+        {
+          "transacao": 68,
+          "escondido": "OLEO PARA BARBA 25M - QOD",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0
+        },
+        {
+          "transacao": 69,
+          "escondido": "LOCAO POS BARBA VANILLA RUM 100ML - QOD",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0
+        },
+        {
+          "transacao": 69,
+          "escondido": "SPRAY FIXADOR DE FIBRA CAPILAR FIBERFIX 120ML",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0
+        },
+        {
+          "transacao": 74,
+          "escondido": "BALM 120ML - FOX FOR MEN",
+          "precision": 1,
+          "recall": 1,
+          "f1": 1
+        },
+        {
+          "transacao": 74,
+          "escondido": "SHAMPOO PARA BARBA 120ML - FOX FOR MEN",
+          "precision": 0.5,
+          "recall": 1,
+          "f1": 0.6666666666666666
+        },
+        {
+          "transacao": 74,
+          "escondido": "OLEO PARA BARBA SPRAY 60ML - FOX FOR MEN",
+          "precision": 0.5,
+          "recall": 1,
+          "f1": 0.6666666666666666
+        },
+        {
+          "transacao": 74,
+          "escondido": "PENTE DE MADEIRA BAMBU MEIA LUA 9,5 - PARA BARBA E BIGODE",
+          "precision": 0,
+          "recall": 0,
+          "f1": 0
+        },
+        {
+          "transacao": 75,
+          "escondido": "MAQUIAGEM CAPILAR PRETO 25g - FOX FOR MEN",
+          "precision": 0.5,
+          "recall": 1,
+          "f1": 0.6666666666666666
+        },
+        {
+          "transacao": 75,
+          "escondido": "APLICADOR DE FIBRA CAPILAR - FOX FOR MEN",
+          "precision": 0.5,
+          "recall": 1,
+          "f1": 0.6666666666666666
+        },
+        {
+          "transacao": 75,
+          "escondido": "SPRAY FIXADOR DE FIBRA CAPILAR FIBERFIX 120ML",
+          "precision": 1,
+          "recall": 1,
+          "f1": 1
+        },
+        {
+          "transacao": 76,
+          "escondido": "APLICADOR DE FIBRA CAPILAR - FOX FOR MEN",
+          "precision": 0.5,
+          "recall": 1,
+          "f1": 0.6666666666666666
+        },
+        {
+          "transacao": 76,
+          "escondido": "MAQUIAGEM CAPILAR PRETO 25g - FOX FOR MEN",
+          "precision": 0.5,
+          "recall": 1,
+          "f1": 0.6666666666666666
+        },
+        {
+          "transacao": 76,
+          "escondido": "SPRAY FIXADOR DE FIBRA CAPILAR FIBERFIX 120ML",
+          "precision": 1,
+          "recall": 1,
+          "f1": 1
+        }
+      ]
+    }
+  }
+}

@@ -6,20 +6,40 @@
  * e insere nas tabelas qb_clientes, qb_produtos, qb_vendas, qb_itens_venda.
  *
  * Uso:
- *   node src/database/seed-csv.js <caminho-do-csv>
+ *   node src/database/seed-csv.js <caminho-do-csv> [--reset]
+ *
+ *   --reset  Apaga TODOS os dados das tabelas qb_* antes de importar
+ *            (evita duplicar vendas de um seed anterior). Use ao trocar
+ *            o dataset por um novo definitivo.
  *
  * Exemplo:
- *   node src/database/seed-csv.js "C:/Users/Quasar/Downloads/Pedidos_2026 (2).csv"
+ *   node src/database/seed-csv.js "../../dados/Pedidos_2026.csv" --reset
  */
 
 require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
-const { supabase } = require('./connection');
+const { createClient } = require('@supabase/supabase-js');
+
+// O seed precisa de permissão de escrita. Com RLS ativado, a anon key recebe
+// "permission denied" — então usamos a service_role key (bypassa RLS) quando
+// disponível. O app em runtime continua usando a anon key via connection.js.
+const SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+if (!SERVICE_KEY) {
+  console.error(
+    'SUPABASE_SERVICE_KEY ausente no .env — necessária para escrever com RLS ativo.\n' +
+    'Pegue em: Supabase → Project Settings → API → service_role (secret).'
+  );
+  process.exit(1);
+}
+const supabase = createClient(process.env.SUPABASE_URL, SERVICE_KEY);
 
 // ── Configuração ──────────────────────────────────────────────────────────────
 
-const CSV_PATH = process.argv[2] || path.join(__dirname, '../../../../dados/vendas-bruto.csv');
+const args = process.argv.slice(2);
+const RESET = args.includes('--reset');
+const CSV_PATH = args.find((a) => !a.startsWith('--'))
+  || path.join(__dirname, '../../../../dados/vendas-bruto.csv');
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -65,6 +85,16 @@ function parsearCSV(conteudo) {
   });
 }
 
+// Converte data BR (DD/MM/AAAA) para ISO (AAAA-MM-DD) exigido pelo Postgres.
+// Sem isso, o Postgres tenta interpretar como MM/DD e (a) erra quando o dia > 12
+// ou (b) pior, troca dia/mês silenciosamente quando o dia <= 12.
+function dataParaISO(dataBR) {
+  const m = (dataBR || '').match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (!m) return dataBR; // já em ISO ou formato inesperado — deixa o banco validar
+  const [, dia, mes, ano] = m;
+  return `${ano}-${mes}-${dia}`;
+}
+
 function agruparPorPedido(linhas) {
   const pedidos = new Map();
 
@@ -75,7 +105,7 @@ function agruparPorPedido(linhas) {
     if (!pedidos.has(id)) {
       pedidos.set(id, {
         pedido_id: id,
-        data: linha['Data'],
+        data: dataParaISO(linha['Data']),
         cliente: linha['Cliente'],
         itens: [],
       });
@@ -95,9 +125,28 @@ function agruparPorPedido(linhas) {
   return Array.from(pedidos.values());
 }
 
+// ── Reset (limpeza) ─────────────────────────────────────────────────────────────
+
+async function resetTabelas() {
+  console.log('⚠ --reset: apagando dados antigos das tabelas qb_*...');
+  // Ordem respeita as FKs: itens → vendas → produtos → clientes
+  const ordem = ['qb_itens_venda', 'qb_vendas', 'qb_produtos', 'qb_clientes'];
+  for (const tabela of ordem) {
+    const { error } = await supabase.from(tabela).delete().gt('id', 0);
+    if (error) {
+      console.error(`Erro ao limpar ${tabela}:`, error.message);
+      process.exit(1);
+    }
+    console.log(`  ✓ ${tabela} limpa`);
+  }
+  console.log('');
+}
+
 // ── Seed principal ─────────────────────────────────────────────────────────────
 
 async function seed() {
+  if (RESET) await resetTabelas();
+
   console.log('Lendo CSV:', CSV_PATH);
 
   if (!fs.existsSync(CSV_PATH)) {

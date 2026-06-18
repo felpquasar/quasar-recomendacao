@@ -132,6 +132,97 @@ class ValidadorRecomendacoes {
       },
     };
   }
+
+  /**
+   * validarLOOCV(vendas, topN)
+   * Leave-One-Out Cross-Validation — adequada para datasets pequenos.
+   *
+   * Em vez de um único split 80/20, faz N rodadas: em cada rodada, uma
+   * transação fica de fora (teste) e o algoritmo treina com TODAS as outras.
+   * Assim cada transação é usada como teste exatamente uma vez e o modelo
+   * sempre treina com o máximo de dados disponível (N-1 transações).
+   *
+   * Caso de teste por transação (modo "esconder 1 produto"):
+   *   Para cada transação de teste com k >= 2 produtos, esconde 1 produto por
+   *   vez e mostra os k-1 restantes como antecedentes. O algoritmo recomenda
+   *   topN produtos; verifica-se se o produto escondido estava entre eles.
+   *   Cada transação de k itens gera k sub-testes.
+   *
+   * @param {Array}  vendas - Todas as vendas no formato de buscarVendas()
+   * @param {number} topN   - Máximo de recomendações por sub-teste (padrão 3)
+   * @returns {Object} { precision_media, recall_media, f1_media, detalhes }
+   */
+  validarLOOCV(vendas, topN = 3) {
+    const subTestes = [];
+
+    for (let k = 0; k < vendas.length; k++) {
+      const transacao = vendas[k];
+      const itens = transacao.itens || [];
+      // Produtos únicos da transação (a mesma cesta pode repetir produto)
+      const produtos = [...new Set(itens.map(i => i.nome_produto))];
+      if (produtos.length < 2) continue; // precisa de >=2 para esconder 1 e mostrar >=1
+
+      // Treina com TODAS as transações menos a atual (leave-one-out)
+      const treino = vendas.filter((_, idx) => idx !== k);
+      const regras = calculateAssociation(treino, 0.30, 0.02);
+
+      // Esconde cada produto por vez
+      for (let h = 0; h < produtos.length; h++) {
+        const escondido = produtos[h];
+        const mostrados = produtos.filter((_, idx) => idx !== h);
+        const mostradosSet = new Set(mostrados);
+
+        // Recomendações: regras cujo antecedente está entre os mostrados e
+        // cujo consequente o cliente ainda não tem na cesta visível.
+        const candidatas = regras
+          .filter(r => mostradosSet.has(r.antecedente) && !mostradosSet.has(r.consequente))
+          .sort((a, b) => b.confidence - a.confidence);
+
+        // Deduplica por consequente (mantém a de maior confidence) e pega topN
+        const vistos = new Set();
+        const recomendacoes = [];
+        for (const r of candidatas) {
+          if (vistos.has(r.consequente)) continue;
+          vistos.add(r.consequente);
+          recomendacoes.push(r);
+          if (recomendacoes.length >= topN) break;
+        }
+
+        // Ground truth = o produto escondido
+        const groundTruth = [escondido];
+        const precision = this.calcularPrecision(recomendacoes, groundTruth);
+        const recall = this.calcularRecall(recomendacoes, groundTruth);
+        const f1 = this.calcularF1Score(precision, recall);
+
+        subTestes.push({ transacao: transacao.id, escondido, precision, recall, f1 });
+      }
+    }
+
+    if (subTestes.length === 0) {
+      return {
+        precision_media: 0,
+        recall_media: 0,
+        f1_media: 0,
+        detalhes: { total_transacoes: vendas.length, sub_testes: 0, accuracy_por_subteste: [] },
+      };
+    }
+
+    const media = arr => arr.reduce((a, b) => a + b, 0) / arr.length;
+    const transacoesAvaliadas = new Set(subTestes.map(s => s.transacao)).size;
+
+    return {
+      precision_media: parseFloat(media(subTestes.map(s => s.precision)).toFixed(4)),
+      recall_media: parseFloat(media(subTestes.map(s => s.recall)).toFixed(4)),
+      f1_media: parseFloat(media(subTestes.map(s => s.f1)).toFixed(4)),
+      detalhes: {
+        total_transacoes: vendas.length,
+        transacoes_avaliadas: transacoesAvaliadas,
+        sub_testes: subTestes.length,
+        top_n: topN,
+        accuracy_por_subteste: subTestes,
+      },
+    };
+  }
 }
 
 module.exports = new ValidadorRecomendacoes();

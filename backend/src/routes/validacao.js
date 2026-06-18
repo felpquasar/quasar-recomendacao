@@ -30,16 +30,19 @@ router.get('/', async (req, res) => {
     }
 
     const vendas = await buscarVendas();
-    const metricas = validador.validarComSplit(vendas);
+    // Leave-One-Out Cross-Validation: protocolo adequado ao dataset reduzido,
+    // aproveita todas as transações como teste (ver Cap. 3.6 do TCC).
+    const metricas = validador.validarLOOCV(vendas);
 
     const resultado = {
       timestamp: new Date().toISOString(),
+      metodo: 'LOOCV (Leave-One-Out Cross-Validation)',
       precision: metricas.precision_media,
       recall: metricas.recall_media,
       f1_score: metricas.f1_media,
-      total_transacoes_treino: metricas.detalhes.total_treino,
-      total_transacoes_teste: metricas.detalhes.total_teste,
+      total_transacoes: metricas.detalhes.total_transacoes,
       transacoes_avaliadas: metricas.detalhes.transacoes_avaliadas,
+      sub_testes: metricas.detalhes.sub_testes,
       descricao: {
         precision: 'Das recomendacoes feitas, quantas resultaram em compra?',
         recall: 'Das compras realizadas, quantas foram recomendadas?',
