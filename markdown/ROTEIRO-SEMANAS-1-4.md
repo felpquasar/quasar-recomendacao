@@ -19,15 +19,15 @@ Fundamentação teórica + Coleta inicial de dados
 
 ```markdown
 ## Tarefas
-- [ ] 1. Ler artigo: "Association Rules Analysis" (Research Gate)
+- [x] 1. Ler artigo: "Association Rules Analysis" (Research Gate)
   Tempo: 45 min
   Deliverable: Resumo em 1 página em `docs/referencias/association-rules.md`
   
-- [ ] 2. Assistir vídeo: "Market Basket Analysis Explained" (YouTube)
+- [x] 2. Assistir vídeo: "Market Basket Analysis Explained" (YouTube)
   Tempo: 20 min
   Deliverable: Anotações-chave em `docs/notas-estudo/`
   
-- [ ] 3. Criar pasta de projeto e repositório GitHub
+- [x] 3. Criar pasta de projeto e repositório GitHub
   Tempo: 15 min
   Comandos:
   ```bash
@@ -43,7 +43,7 @@ Fundamentação teórica + Coleta inicial de dados
 - [ ] 3 artigos sobre sistemas de recomendação salvos
 - [ ] Anotações sobre Collaborative Filtering
 - [ ] Anotações sobre Content-Based Filtering
-- [ ] Repositório criado no GitHub
+- [x] Repositório criado no GitHub
 
 **Ferramentas:**
 - Google Scholar / ResearchGate
@@ -57,7 +57,7 @@ Fundamentação teórica + Coleta inicial de dados
 
 ```markdown
 ## Tarefas
-- [ ] 1. Exportar histórico de vendas de Quasar Barber
+- [x] 1. Exportar histórico de vendas de Quasar Barber
   Tempo: 45 min
   O que buscar:
     - Data da venda
@@ -67,7 +67,7 @@ Fundamentação teórica + Coleta inicial de dados
     - Método de pagamento
   Deliverable: Arquivo CSV bruto em `dados/vendas-bruto.csv`
   
-- [ ] 2. Estruturar schema do banco de dados
+- [x] 2. Estruturar schema do banco de dados
   Tempo: 45 min
   Criar arquivo: `backend/database/schema.sql`
   Incluir tabelas:
@@ -77,7 +77,7 @@ Fundamentação teórica + Coleta inicial de dados
     - clientes (id, nome_loja, cidade)
   Deliverable: Schema SQL completo
   
-- [ ] 3. Explorar dataset inicial (análise visual)
+- [x] 3. Explorar dataset inicial (análise visual)
   Tempo: 30 min
   Perguntas a responder:
     - Quantas transações? (Expectativa: 400-600)
@@ -88,10 +88,10 @@ Fundamentação teórica + Coleta inicial de dados
 ```
 
 **Checklist:**
-- [ ] Dados históricos exportados
-- [ ] Schema SQL criado (8+ tabelas)
-- [ ] Análise exploratória concluída
-- [ ] Estatísticas básicas documentadas
+- [x] Dados históricos exportados
+- [x] Schema SQL criado (8+ tabelas)
+- [x] Análise exploratória concluída
+- [x] Estatísticas básicas documentadas
 
 **Ferramentas:**
 - Excel / Google Sheets
@@ -141,7 +141,7 @@ Fundamentação teórica + Coleta inicial de dados
 
 ```markdown
 ## Tarefas
-- [ ] 1. Criar estrutura de pastas do projeto
+- [x] 1. Criar estrutura de pastas do projeto
   Tempo: 30 min
   Comandos:
   ```bash
@@ -158,9 +158,9 @@ Fundamentação teórica + Coleta inicial de dados
 ```
 
 **Checklist:**
-- [ ] Pastas criadas
-- [ ] Arquivos base criados
-- [ ] .gitignore configurado
+- [x] Pastas criadas
+- [x] Arquivos base criados
+- [x] .gitignore configurado
 
 ---
 
