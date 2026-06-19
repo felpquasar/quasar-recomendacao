@@ -48,7 +48,7 @@ Desenvolver e validar um sistema de recomendação de produtos B2B baseado em re
 2. **Modelar** uma base de dados transacional (PostgreSQL/Supabase) que represente clientes, produtos, vendas e itens de venda da distribuidora.
 3. **Implementar** o algoritmo de extração de regras de associação e a geração de recomendações Top-N em uma API REST (Node.js/Express).
 4. **Construir** uma interface web (React) que permita consultar recomendações por produto e visualizar métricas e gráficos das regras descobertas.
-5. **Validar** a qualidade das recomendações por meio de *train/test split* (80/20), calculando Precision, Recall e F1-Score, e discutir as limitações impostas pelo tamanho do conjunto de dados.
+5. **Validar** a qualidade das recomendações por meio de *validação cruzada Leave-One-Out* (LOOCV), calculando Precision, Recall e F1-Score, e discutir as limitações impostas pelo tamanho do conjunto de dados.
 6. **Analisar** as regras de maior *lift* sob a ótica de negócio, verificando sua aderência ao conhecimento de domínio.
 
 ## 1.5 Justificativa

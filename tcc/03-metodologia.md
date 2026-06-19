@@ -22,7 +22,7 @@ Adota-se a operacionalização proposta por Peffers et al. (2007), que organiza 
 | 2. Definição dos objetivos da solução | Gerar recomendações Top-N estatisticamente relevantes a partir do histórico transacional (Seção 1.4). |
 | 3. Projeto e desenvolvimento | Sistema completo — banco de dados, algoritmo de regras de associação, API REST e interface web (Capítulo 4). |
 | 4. Demonstração | Execução do sistema sobre os dados reais de vendas de 2026 da Quasar Barber. |
-| 5. Avaliação | Cálculo de Precision, Recall e F1-Score por validação cruzada, além da análise das regras por *lift* (Capítulo 5). |
+| 5. Avaliação | Cálculo de Precision, Recall e F1-Score por validação cruzada *Leave-One-Out* (LOOCV), além da análise das regras por *lift* (Capítulo 5). |
 | 6. Comunicação | Esta monografia e a sua defesa perante a banca. |
 
 Fonte: elaborado pelo autor (2026).
