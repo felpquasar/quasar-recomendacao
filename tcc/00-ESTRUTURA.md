@@ -55,7 +55,7 @@ Desenvolver e validar um sistema de recomendação de produtos B2B baseado em re
 2. **Modelar** uma base de dados transacional (PostgreSQL/Supabase) que represente clientes, produtos, vendas e itens de venda da distribuidora.
 3. **Implementar** o algoritmo de extração de regras de associação e a geração de recomendações Top-N em uma API REST (Node.js/Express).
 4. **Construir** uma interface web (React) que permita consultar recomendações por produto e visualizar métricas e gráficos das regras descobertas.
-5. **Validar** a qualidade das recomendações via train/test split (80/20), calculando Precision, Recall e F1-Score, e discutir as limitações impostas pelo tamanho do dataset.
+5. **Validar** a qualidade das recomendações via validação cruzada Leave-One-Out (LOOCV), calculando Precision, Recall e F1-Score, e discutir as limitações impostas pelo tamanho do dataset.
 6. **Analisar** as regras de maior lift do ponto de vista de negócio, verificando aderência ao conhecimento de domínio.
 
 ---
@@ -85,7 +85,7 @@ Desenvolver e validar um sistema de recomendação de produtos B2B baseado em re
 - Stack: Node.js + Express + Supabase (PostgreSQL) + Redis (cache opcional); React 18 + Vite; Chart.js.
 - Algoritmo: extração de regras de associação par-a-par com cálculo de support, confidence e lift; ranqueamento Top-N.
 - Parâmetros: `MIN_CONFIDENCE = 0,30`, `MIN_SUPPORT = 0,02`, `TOP_N = 3`.
-- Validação: train/test split 80/20 com Precision, Recall e F1-Score.
+- Validação: validação cruzada Leave-One-Out (LOOCV) com Precision, Recall e F1-Score.
 
 ---
 
@@ -131,7 +131,7 @@ Desenvolver e validar um sistema de recomendação de produtos B2B baseado em re
 - 3.3 Coleta e origem dos dados
 - 3.4 Pré-processamento (parse de CSV, agrupamento por pedido, inferência de categoria)
 - 3.5 Ferramentas e tecnologias
-- 3.6 Protocolo de validação (train/test split 80/20)
+- 3.6 Protocolo de validação (validação cruzada Leave-One-Out / LOOCV)
 
 ### 4. DESENVOLVIMENTO DO SISTEMA *(≈14 págs)*
 - 4.1 Arquitetura geral (cliente → API → serviços → banco)
