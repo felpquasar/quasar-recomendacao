@@ -69,7 +69,7 @@ Levantamento via Google Scholar / ACM / IEEE (jun 2026). Contagens são **ordem 
 **[10]** AGGARWAL, C. C. **Recommender systems**: the textbook. Cham: Springer, 2016.
 > *Livro-texto moderno; capítulo dedicado a métodos baseados em regras de associação — conecta os temas A e C.*
 
-**[11]** SARWAR, B.; KARYPIS, G.; KONSTAN, J.; RIEDL, J. Item-based collaborative filtering recommendation algorithms. In: INTERNATIONAL CONFERENCE ON WORLD WIDE WEB (WWW), 10., 2001, Hong Kong. **Proceedings** [...]. New York: ACM, 2001. p. 285-299.
+**[11]** SARWAR, B.; KARYPIS, G.; KONSTAN, J.; RIEDL, J. Item-based collaborative filtering recommendation algorithms. In: INTERNATIONAL CONFERENCE ON WORLD WIDE WEB (WWW), 10., 2001, Hong Kong. **Proceedings** [...]. New York: ACM, 2001. p. 285-295.
 > *Contraponto: por que filtragem colaborativa exige matriz densa. Cap. 2.1.2 e justificativa da escolha por Association Rules.*
 
 **[21]** KOREN, Y.; BELL, R.; VOLINSKY, C. Matrix factorization techniques for recommender systems. **Computer**, v. 42, n. 8, p. 30-37, 2009.
@@ -158,7 +158,7 @@ RESNICK, P.; VARIAN, H. R. Recommender systems. Communications of the ACM, v. 40
 
 RICCI, F.; ROKACH, L.; SHAPIRA, B. (Eds.). Recommender systems handbook. 2. ed. New York: Springer, 2015.
 
-SARWAR, B.; KARYPIS, G.; KONSTAN, J.; RIEDL, J. Item-based collaborative filtering recommendation algorithms. In: INTERNATIONAL CONFERENCE ON WORLD WIDE WEB (WWW), 10., 2001, Hong Kong. Proceedings [...]. New York: ACM, 2001. p. 285-299.
+SARWAR, B.; KARYPIS, G.; KONSTAN, J.; RIEDL, J. Item-based collaborative filtering recommendation algorithms. In: INTERNATIONAL CONFERENCE ON WORLD WIDE WEB (WWW), 10., 2001, Hong Kong. Proceedings [...]. New York: ACM, 2001. p. 285-295.
 
 SCHAFER, J. B.; KONSTAN, J. A.; RIEDL, J. E-commerce recommendation applications. Data Mining and Knowledge Discovery, v. 5, n. 1-2, p. 115-153, 2001.
 
