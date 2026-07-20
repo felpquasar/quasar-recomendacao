@@ -30,12 +30,17 @@ class ValidadorRecomendacoes {
    * @returns {number} Valor entre 0 e 1
    */
   calcularPrecision(recomendacoes, comprasRealizadas) {
+    // Sem recomendação não há como medir precisão → 0 (evita 0/0).
     if (recomendacoes.length === 0) return 0;
 
+    // Acertos = recomendações cujo produto sugerido (consequente) realmente
+    // está entre as compras reais do cliente.
     const acertos = recomendacoes.filter(rec =>
       comprasRealizadas.includes(rec.consequente)
     ).length;
 
+    // Precision = acertos / total recomendado.
+    // "Do que sugeri, quanto o cliente de fato comprou?"
     return acertos / recomendacoes.length;
   }
 
@@ -46,12 +51,16 @@ class ValidadorRecomendacoes {
    * @returns {number} Valor entre 0 e 1
    */
   calcularRecall(recomendacoes, comprasRealizadas) {
+    // Sem compras reais não há base de comparação → 0 (evita 0/0).
     if (comprasRealizadas.length === 0) return 0;
 
+    // Acertos = compras reais que foram cobertas por alguma recomendação.
     const acertos = comprasRealizadas.filter(compra =>
       recomendacoes.some(rec => rec.consequente === compra)
     ).length;
 
+    // Recall = acertos / total comprado.
+    // "Das compras reais, quantas o sistema conseguiu prever?"
     return acertos / comprasRealizadas.length;
   }
 
@@ -63,7 +72,11 @@ class ValidadorRecomendacoes {
    * @returns {number} Valor entre 0 e 1
    */
   calcularF1Score(precision, recall) {
+    // Ambos zero → F1 zero (e evita 0/0 na fórmula abaixo).
     if (precision === 0 && recall === 0) return 0;
+
+    // F1 = média harmônica de P e R. Diferente da média simples, ela puxa
+    // o resultado p/ baixo se UM dos dois for ruim — exige equilíbrio.
     return (2 * (precision * recall)) / (precision + recall);
   }
 
@@ -77,25 +90,29 @@ class ValidadorRecomendacoes {
    * @returns {Object} { precision_media, recall_media, f1_media, detalhes }
    */
   validarComSplit(vendas) {
+    // Corta o dataset em 80% (treino) / 20% (teste).
     const splitIndex = Math.floor(vendas.length * 0.8);
-    const treino = vendas.slice(0, splitIndex);
-    const teste = vendas.slice(splitIndex);
+    const treino = vendas.slice(0, splitIndex); // primeiras 80%
+    const teste = vendas.slice(splitIndex);     // últimas 20%
 
-    // Calcula regras apenas com dados de treino
+    // Regras aprendidas SÓ no treino — o teste não pode vazar p/ o modelo.
     const regras = calculateAssociation(treino, 0.30, 0.02);
 
+    // Guarda P/R/F1 de cada transação de teste avaliada.
     const accuracyPorTransacao = [];
 
     teste.forEach(transacao => {
-      // Guard: ignora transações com menos de 2 itens (nada para validar)
+      // Guard: cesta com <2 itens não tem o que validar (nada p/ esconder).
       if (!transacao.itens || transacao.itens.length < 2) return;
 
       const produtosComprados = transacao.itens.map(i => i.nome_produto);
-      const primeiroProduto = produtosComprados[0];
-      const outrosProdutos = produtosComprados.slice(1); // ground truth
+      const primeiroProduto = produtosComprados[0]; // antecedente (entrada)
+      const outrosProdutos = produtosComprados.slice(1); // ground truth (resto)
 
+      // Recomenda a partir do 1º produto da cesta.
       const recomendacoes = regras.filter(r => r.antecedente === primeiroProduto);
 
+      // Compara recomendações com o que o cliente realmente levou.
       const precision = this.calcularPrecision(recomendacoes, outrosProdutos);
       const recall = this.calcularRecall(recomendacoes, outrosProdutos);
       const f1 = this.calcularF1Score(precision, recall);
@@ -153,42 +170,51 @@ class ValidadorRecomendacoes {
    * @returns {Object} { precision_media, recall_media, f1_media, detalhes }
    */
   validarLOOCV(vendas, topN = 3) {
+    // Acumula 1 registro P/R/F1 por subteste (cada produto escondido).
     const subTestes = [];
 
+    // RODADA EXTERNA: cada transação k vira "a que fica de fora" uma vez.
     for (let k = 0; k < vendas.length; k++) {
       const transacao = vendas[k];
       const itens = transacao.itens || [];
-      // Produtos únicos da transação (a mesma cesta pode repetir produto)
-      const produtos = [...new Set(itens.map(i => i.nome_produto))];
-      if (produtos.length < 2) continue; // precisa de >=2 para esconder 1 e mostrar >=1
 
-      // Treina com TODAS as transações menos a atual (leave-one-out)
+      // Produtos ÚNICOS da cesta (a mesma cesta pode repetir produto).
+      const produtos = [...new Set(itens.map(i => i.nome_produto))];
+
+      // Precisa de >=2: esconde 1 e ainda sobra >=1 p/ servir de antecedente.
+      // Cestas de 1 item são puladas — por isso 30 transações → 14 avaliáveis.
+      if (produtos.length < 2) continue;
+
+      // Leave-One-Out: treina com TODAS as cestas menos a atual (índice k).
+      // Garante que o modelo nunca "vê" a cesta que está testando.
       const treino = vendas.filter((_, idx) => idx !== k);
       const regras = calculateAssociation(treino, 0.30, 0.02);
 
-      // Esconde cada produto por vez
+      // RODADA INTERNA: esconde cada produto da cesta, 1 por vez.
+      // Cesta com k produtos gera k subtestes → soma das 14 cestas = 36.
       for (let h = 0; h < produtos.length; h++) {
-        const escondido = produtos[h];
-        const mostrados = produtos.filter((_, idx) => idx !== h);
-        const mostradosSet = new Set(mostrados);
+        const escondido = produtos[h]; // o que o sistema precisa "adivinhar"
+        const mostrados = produtos.filter((_, idx) => idx !== h); // entrada visível
+        const mostradosSet = new Set(mostrados); // Set p/ busca O(1)
 
-        // Recomendações: regras cujo antecedente está entre os mostrados e
-        // cujo consequente o cliente ainda não tem na cesta visível.
+        // Candidatas: regras que (a) partem de um produto visível na cesta e
+        // (b) sugerem algo que o cliente AINDA não tem visível (senão é óbvio).
         const candidatas = regras
           .filter(r => mostradosSet.has(r.antecedente) && !mostradosSet.has(r.consequente))
-          .sort((a, b) => b.confidence - a.confidence);
+          .sort((a, b) => b.confidence - a.confidence); // mais fortes primeiro
 
-        // Deduplica por consequente (mantém a de maior confidence) e pega topN
+        // Deduplica por consequente: vários produtos visíveis podem sugerir o
+        // mesmo item — mantém só a regra de maior confidence. Para no topN.
         const vistos = new Set();
         const recomendacoes = [];
         for (const r of candidatas) {
-          if (vistos.has(r.consequente)) continue;
+          if (vistos.has(r.consequente)) continue; // já recomendado, pula
           vistos.add(r.consequente);
           recomendacoes.push(r);
-          if (recomendacoes.length >= topN) break;
+          if (recomendacoes.length >= topN) break; // atingiu o teto (3)
         }
 
-        // Ground truth = o produto escondido
+        // Ground truth = só o produto que escondemos. Acerto = trazê-lo no topN.
         const groundTruth = [escondido];
         const precision = this.calcularPrecision(recomendacoes, groundTruth);
         const recall = this.calcularRecall(recomendacoes, groundTruth);
@@ -207,7 +233,10 @@ class ValidadorRecomendacoes {
       };
     }
 
+    // Helper de média aritmética simples.
     const media = arr => arr.reduce((a, b) => a + b, 0) / arr.length;
+
+    // Quantas cestas distintas geraram subteste (esperado: 14).
     const transacoesAvaliadas = new Set(subTestes.map(s => s.transacao)).size;
 
     return {

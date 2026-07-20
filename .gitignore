@@ -39,3 +39,6 @@ docs/referencias/
 # MS Word temp/lock files
 ~$*
 *.tmp
+
+# Playwright MCP session output
+.playwright-mcp/

@@ -37,13 +37,20 @@
  * @returns {Set<string>} Conjunto de nomes de produtos únicos
  */
 function extrairProdutosUnicos(vendas) {
+  // Set: estrutura que descarta duplicatas automaticamente. Se "Pomada"
+  // aparecer em 10 vendas, fica gravada só 1 vez.
   const produtos = new Set();
+
+  // Percorre cada venda (transação/cesta) do histórico.
   vendas.forEach(venda => {
-    // Guard: ignora vendas malformadas sem array de itens
+    // Guard: ignora vendas malformadas sem array de itens (evita crash).
     if (venda.itens && Array.isArray(venda.itens)) {
+      // Cada item da cesta tem o seu nome adicionado ao Set.
       venda.itens.forEach(item => produtos.add(item.nome_produto));
     }
   });
+
+  // Devolve o conjunto de nomes distintos (ex.: 29 produtos no dataset real).
   return produtos;
 }
 
@@ -69,64 +76,78 @@ function extrairProdutosUnicos(vendas) {
  *   [{ antecedente, consequente, confidence, support, lift, frequencia }]
  */
 function calculateAssociation(vendas, minConfidence = 0.30, minSupport = 0.02) {
+  // Acumulador: cada regra A→B aprovada é empurrada aqui.
   const regras = [];
+
+  // Denominador comum do support — total de cestas no histórico (ex.: 30).
   const totalTransacoes = vendas.length;
 
-  // Guard: dataset vazio retorna array vazio sem processamento
+  // Guard: dataset vazio retorna array vazio sem processamento (evita /0).
   if (totalTransacoes === 0) return regras;
 
+  // Lista de produtos distintos → candidatos a antecedente e consequente.
   const produtos = extrairProdutosUnicos(vendas);
-  const produtosArray = Array.from(produtos);
+  const produtosArray = Array.from(produtos); // Set → Array p/ indexar com i/j.
 
-  // Duplo laço gera todos os pares ordenados (A→B ≠ B→A)
+  // Duplo laço gera TODOS os pares ordenados. Ordenado importa: a regra
+  // A→B é diferente de B→A (confidence muda conforme a direção).
   for (let i = 0; i < produtosArray.length; i++) {
     for (let j = 0; j < produtosArray.length; j++) {
-      if (i === j) continue; // Produto não recomenda a si mesmo
+      if (i === j) continue; // Produto não recomenda a si mesmo.
 
-      const produtoA = produtosArray[i]; // antecedente (o que foi comprado)
-      const produtoB = produtosArray[j]; // consequente (o que recomendar)
+      const produtoA = produtosArray[i]; // antecedente (o que o cliente já tem)
+      const produtoB = produtosArray[j]; // consequente (o que vamos recomendar)
 
-      // Filtra transações que contêm o produto A
+      // freq(A): cestas que contêm o produto A.
+      // O ?. protege contra cestas sem array de itens.
       const transacoesComA = vendas.filter(v =>
         v.itens?.some(item => item.nome_produto === produtoA)
       );
 
-      // Das transações com A, filtra as que também têm B
+      // freq(A ∩ B): das cestas com A, quais também têm B.
       const transacoesComAeB = transacoesComA.filter(v =>
         v.itens?.some(item => item.nome_produto === produtoB)
       );
 
-      // Evita divisão por zero se o produto A nunca apareceu
+      // Evita divisão por zero se o produto A nunca apareceu no histórico.
       if (transacoesComA.length === 0) continue;
 
-      // Métricas principais
+      // Confidence = freq(A ∩ B) / freq(A)
+      // "Dado que comprou A, qual a chance de comprar B?" — força da regra.
       const confidence = transacoesComAeB.length / transacoesComA.length;
+
+      // Support = freq(A ∩ B) / total — quão comum é o par no dataset inteiro.
       const support = transacoesComAeB.length / totalTransacoes;
 
-      // Aplica filtros de threshold — descarta regras fracas
+      // Filtro de threshold: só passa regra forte (confidence) E frequente
+      // (support) o bastante. Descarta ruído e coincidências raras.
       if (confidence >= minConfidence && support >= minSupport) {
-        // Lift exige o support isolado de B para o cálculo
+        // Lift precisa do support ISOLADO de B (probabilidade de B sozinho).
         const transacoesComB = vendas.filter(v =>
           v.itens?.some(item => item.nome_produto === produtoB)
         );
-        const supportB = transacoesComB.length / totalTransacoes;
+        const supportB = transacoesComB.length / totalTransacoes; // P(B)
 
-        // Lift = confidence / P(B) — valores > 1 indicam associação real
+        // Lift = confidence(A→B) / P(B).
+        //   > 1 → A e B aparecem juntos MAIS que por acaso (associação real).
+        //   = 1 → independentes.  < 1 → correlação negativa.
         const lift = supportB > 0 ? confidence / supportB : 0;
 
+        // Regra aprovada — guarda métricas arredondadas em 4 casas.
         regras.push({
           antecedente: produtoA,
           consequente: produtoB,
           confidence: parseFloat(confidence.toFixed(4)),
           support: parseFloat(support.toFixed(4)),
           lift: parseFloat(lift.toFixed(4)),
-          frequencia: transacoesComAeB.length, // count absoluto (útil para debug)
+          frequencia: transacoesComAeB.length, // count absoluto (útil p/ debug)
         });
       }
     }
   }
 
-  // Ordena por confidence desc para que obterRecomendacoes() só precise .slice()
+  // Ordena por confidence desc: as regras mais fortes ficam no topo, então
+  // obterRecomendacoes() só precisa de .slice() para pegar as melhores.
   return regras.sort((a, b) => b.confidence - a.confidence);
 }
 
@@ -146,7 +167,10 @@ function calculateAssociation(vendas, minConfidence = 0.30, minSupport = 0.02) {
  */
 function obterRecomendacoes(produtoNome, regras, topN = 3) {
   return regras
+    // Mantém só as regras que partem do produto consultado (antecedente).
     .filter(r => r.antecedente === produtoNome)
+    // Como 'regras' já vem ordenado por confidence desc, o slice pega
+    // diretamente as topN mais fortes — sem reordenar.
     .slice(0, topN);
 }
 

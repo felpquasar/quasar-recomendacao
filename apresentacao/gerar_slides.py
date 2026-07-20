@@ -408,7 +408,7 @@ refs = [
     "AGRAWAL, R.; IMIELIŃSKI, T.; SWAMI, A. Mining association rules between sets of items in large databases. In: ACM SIGMOD, 1993. p. 207-216.",
     "HAN, J.; PEI, J.; YIN, Y. Mining frequent patterns without candidate generation. In: ACM SIGMOD, 2000. p. 1-12.",
     "ADOMAVICIUS, G.; TUZHILIN, A. Toward the next generation of recommender systems. IEEE TKDE, v. 17, n. 6, p. 734-749, 2005.",
-    "SARWAR, B. et al. Item-based collaborative filtering recommendation algorithms. In: WWW, 2001. p. 285-299.",
+    "SARWAR, B. et al. Item-based collaborative filtering recommendation algorithms. In: WWW, 2001. p. 285-295.",
     "HAN, J.; KAMBER, M.; PEI, J. Data mining: concepts and techniques. 3. ed. Morgan Kaufmann, 2011.",
     "HEVNER, A. R. et al. Design science in information systems research. MIS Quarterly, v. 28, n. 1, p. 75-105, 2004.",
     "POWERS, D. M. W. Evaluation: from precision, recall and F-measure to ROC... J. Machine Learning Tech., v. 2, n. 1, 2011.",

@@ -44,42 +44,50 @@ const CSV_PATH = args.find((a) => !a.startsWith('--'))
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function inferirCategoria(nomeProduto) {
+  // Normaliza p/ maiúsculas — comparação fica insensível a caixa.
   const n = nomeProduto.toUpperCase();
 
+  // 1ª prioridade: ferramentas físicas → Acessórios.
   if (n.includes('PENTE') || n.includes('ESCOVINHA') || n.includes('TESOURA')) {
     return 'Acessórios';
   }
 
+  // 2ª prioridade: palavras-chave do universo barba.
   const keywords_barba = [
     'BARBA', 'BALM', 'AFTER SHAVE', 'BALSAMO', 'BÁLSAMO',
     'PRE BARBA', 'POS BARBA', 'PÓS BARBA', 'BIGODE',
   ];
 
+  // some(): basta UMA keyword bater p/ classificar como Barba.
   if (keywords_barba.some((k) => n.includes(k))) {
     return 'Barba';
   }
 
+  // Default: não bateu em nada → assume linha de Cabelo.
   return 'Cabelo';
 }
 
 function parsearCSV(conteudo) {
-  // Remove BOM (UTF-8 com BOM de Excel) e normaliza quebras de linha
   const linhas = conteudo
-    .replace(/^﻿/, '')
-    .replace(/\r\n/g, '\n')
-    .replace(/\r/g, '\n')
-    .split('\n')
-    .map((l) => l.trim())
-    .filter(Boolean);
+    .replace(/^﻿/, '')        // remove BOM que o Excel grava no início do arquivo
+    .replace(/\r\n/g, '\n')   // CRLF (Windows) → LF
+    .replace(/\r/g, '\n')     // CR solto (Mac antigo) → LF
+    .split('\n')              // quebra em linhas
+    .map((l) => l.trim())     // tira espaços das pontas
+    .filter(Boolean);         // descarta linhas vazias
 
+  // 1ª linha = cabeçalho; resto = dados.
   const [cabecalho, ...dados] = linhas;
+
+  // Nomes das colunas (separador é ';', padrão BR do Excel).
   const colunas = cabecalho.split(';').map((c) => c.trim());
 
+  // Cada linha de dados vira objeto { coluna: valor } usando o cabeçalho.
   return dados.map((linha) => {
     const valores = linha.split(';');
     const obj = {};
     colunas.forEach((col, i) => {
-      obj[col] = (valores[i] || '').trim();
+      obj[col] = (valores[i] || '').trim(); // '' se faltar valor na coluna
     });
     return obj;
   });
@@ -89,32 +97,40 @@ function parsearCSV(conteudo) {
 // Sem isso, o Postgres tenta interpretar como MM/DD e (a) erra quando o dia > 12
 // ou (b) pior, troca dia/mês silenciosamente quando o dia <= 12.
 function dataParaISO(dataBR) {
+  // Captura DD/MM/AAAA em 3 grupos (dia, mês, ano).
   const m = (dataBR || '').match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-  if (!m) return dataBR; // já em ISO ou formato inesperado — deixa o banco validar
+  // Não bateu o padrão → devolve como está e deixa o Postgres validar.
+  if (!m) return dataBR;
+  // Reordena p/ AAAA-MM-DD (formato ISO que o Postgres aceita sem ambiguidade).
   const [, dia, mes, ano] = m;
   return `${ano}-${mes}-${dia}`;
 }
 
 function agruparPorPedido(linhas) {
+  // Map id-do-pedido → objeto-pedido. Reúne linhas-item da mesma cesta.
   const pedidos = new Map();
 
   for (const linha of linhas) {
     const id = linha['Pedido'];
-    if (!id) continue;
+    if (!id) continue; // linha sem número de pedido é descartada
 
+    // 1ª vez que vemos esse pedido → cria o cabeçalho da cesta.
     if (!pedidos.has(id)) {
       pedidos.set(id, {
         pedido_id: id,
         data: dataParaISO(linha['Data']),
         cliente: linha['Cliente'],
-        itens: [],
+        itens: [], // itens serão empurrados abaixo
       });
     }
 
+    // Valor BR usa vírgula decimal ("12,90") → troca por ponto p/ parseFloat.
     const valorBruto = linha['Valor (R$)'] || '0';
     const valor = parseFloat(valorBruto.replace(',', '.'));
+    // Qtd: inteiro; default 1 se vier vazio.
     const qtd = parseInt(linha['Qtd'] || '1', 10);
 
+    // Adiciona o item à cesta correspondente.
     pedidos.get(id).itens.push({
       produto: linha['Produto'],
       quantidade: qtd,
@@ -122,6 +138,7 @@ function agruparPorPedido(linhas) {
     });
   }
 
+  // Map → Array de pedidos (cada um com seus itens agrupados).
   return Array.from(pedidos.values());
 }
 
